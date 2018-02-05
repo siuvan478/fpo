@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fpo.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.fpo.model.User">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
+        <result column="username" jdbcType="VARCHAR" property="username"/>
+        <result column="password" jdbcType="VARCHAR" property="password"/>
+        <result column="salt" jdbcType="VARCHAR" property="salt"/>
+        <result column="reg_time" jdbcType="TIMESTAMP" property="regTime"/>
+    </resultMap>
+
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from fpo_user
+    where id = #{id,jdbcType=BIGINT}
+    </delete>
+
+    <insert id="insert" parameterType="com.fpo.model.User" useGeneratedKeys="true" keyProperty="id">
+    insert into fpo_user (id, nick_name, username, 
+      password, salt, reg_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{nickName,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{regTime,jdbcType=TIMESTAMP}
+      )
+    </insert>
+
+    <update id="updateByPrimaryKey" parameterType="com.fpo.model.User">
+    update fpo_user
+    set nick_name = #{nickName,jdbcType=VARCHAR},
+      username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      salt = #{salt,jdbcType=VARCHAR},
+      reg_time = #{regTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, nick_name, username, password, salt, reg_time
+    from fpo_user
+    where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+    select id, nick_name, username, password, salt, reg_time
+    from fpo_user
+    </select>
+
+    <select id="findByUsername" resultMap="BaseResultMap">
+        SELECT id, nick_name, username, password, salt, reg_time FROM fpo_user
+        WHERE username = #{username}
+    </select>
+
+</mapper>
