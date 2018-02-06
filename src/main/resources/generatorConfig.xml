@@ -28,7 +28,7 @@
         <!-- 生成映射接口配置 -->
         <javaClientGenerator targetPackage="com.fpo.mapper" targetProject="src/main/java" type="XMLMAPPER"/>
 
-        <table tableName="fpo_user" domainObjectName="User"
+        <table tableName="fpo_order_details" domainObjectName="OrderDetails"
                enableCountByExample="false" enableUpdateByExample="false"
                enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false"/>
     </context>

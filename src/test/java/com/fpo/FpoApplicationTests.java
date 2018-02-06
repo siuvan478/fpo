@@ -4,10 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.fpo.mapper.UserMapper;
 import com.fpo.model.User;
 import com.fpo.service.UserService;
+import com.fpo.utils.RedisUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -40,9 +42,12 @@ public class FpoApplicationTests {
         System.out.println(userId);
     }
 
-    @Test
-    public void login() {
+    @Autowired
+    private RedisUtils redisUtils;
 
+    @Test
+    public void testRedisUtil() {
+        redisUtils.incr("1:2:3", 1L);
     }
 
 }

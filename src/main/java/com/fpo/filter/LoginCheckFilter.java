@@ -4,12 +4,16 @@ package com.fpo.filter;
 import com.alibaba.druid.util.PatternMatcher;
 import com.alibaba.druid.util.ServletPathMatcher;
 import com.alibaba.fastjson.JSON;
+import com.fpo.base.CacheKey;
 import com.fpo.base.ResultData;
+import com.fpo.model.UserEntity;
 import com.fpo.utils.LoginUtil;
+import com.fpo.utils.RedisUtils;
 import com.fpo.utils.WafRequestWrapper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.stereotype.Component;
@@ -45,6 +49,9 @@ public class LoginCheckFilter implements Filter {
 
     private Set<String> excludePathSet;
 
+    @Autowired
+    private RedisUtils redisUtils;
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         if (StringUtils.isNotBlank(initExcludePaths)) {
@@ -69,6 +76,13 @@ public class LoginCheckFilter implements Filter {
                 this.redirect(httpResponse, UNLOGIN_MESSAGE, UNLOGIN_CODE);
                 return;
             }
+            //token失效
+            UserEntity userEntity = redisUtils.get(CacheKey.TOKEN_KEY + token, UserEntity.class);
+            if (userEntity == null) {
+                this.redirect(httpResponse, UNLOGIN_MESSAGE, UNLOGIN_CODE);
+                return;
+            }
+            LoginUtil.setUserJson(userEntity);
         }
         filterChain.doFilter(httpRequest, httpResponse);
     }
