@@ -51,6 +51,16 @@ public class RedisUtils {
     }
 
     /**
+     * 取得缓存
+     *
+     * @param key
+     * @return
+     */
+    public String getStr(String key) {
+        return stringRedisTemplate.boundValueOps(key).get();
+    }
+
+    /**
      * 将value对象写入缓存
      *
      * @param key   缓存键
@@ -85,11 +95,11 @@ public class RedisUtils {
         } else if (value.getClass().equals(Boolean.class)) {
             stringRedisTemplate.opsForValue().set(key, value.toString());
         } else {
-            if (time != null && time > 0) {
-                redisTemplate.opsForValue().set(key, value, time, TimeUnit.SECONDS);
-            } else {
-                redisTemplate.opsForValue().set(key, value);
-            }
+            redisTemplate.opsForValue().set(key, value);
+        }
+
+        if (time != null && time > 0) {
+            redisTemplate.expire(key, time, TimeUnit.SECONDS);
         }
     }
 

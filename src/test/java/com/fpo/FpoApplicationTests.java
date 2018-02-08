@@ -3,6 +3,7 @@ package com.fpo;
 import com.alibaba.fastjson.JSONObject;
 import com.fpo.mapper.UserMapper;
 import com.fpo.model.User;
+import com.fpo.model.UserParam;
 import com.fpo.service.UserService;
 import com.fpo.utils.RedisUtils;
 import com.github.pagehelper.PageHelper;
@@ -34,9 +35,9 @@ public class FpoApplicationTests {
     }
 
     @Test
-    public void regUser() throws Exception{
-        User user = new User();
-        user.setUsername("17620021827");
+    public void regUser() throws Exception {
+        UserParam user = new UserParam();
+        user.setUsername("17620021821");
         user.setPassword("123456");
         Long userId = userService.registerUser(user);
         System.out.println(userId);
@@ -48,6 +49,20 @@ public class FpoApplicationTests {
     @Test
     public void testRedisUtil() {
         redisUtils.incr("1:2:3", 1L);
+    }
+
+    @Test
+    public void testSendVerifyCode() throws Exception{
+        UserParam u = new UserParam();
+        u.setVerifyCodeType(1);
+        u.setUsername("17620021827");
+        userService.sendVerifyCode(u);
+        u.setVerifyCodeType(2);
+        u.setUsername("17620021827");
+        userService.sendVerifyCode(u);
+        u.setVerifyCodeType(3);
+        u.setUsername("17620021827");
+        userService.sendVerifyCode(u);
     }
 
 }

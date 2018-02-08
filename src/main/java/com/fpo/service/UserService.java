@@ -1,16 +1,15 @@
 package com.fpo.service;
 
 import com.fpo.base.BaseException;
-import com.fpo.base.CacheKey;
+import com.fpo.base.GlobalConstants;
 import com.fpo.mapper.UserMapper;
 import com.fpo.model.User;
 import com.fpo.model.UserEntity;
 import com.fpo.model.UserParam;
-import com.fpo.utils.BeanMapper;
-import com.fpo.utils.Digests;
-import com.fpo.utils.Encodes;
-import com.fpo.utils.RedisUtils;
+import com.fpo.utils.*;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -18,6 +17,8 @@ import java.util.Date;
 
 @Service
 public class UserService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     private static final String HASH_ALGORITHM = "SHA-1";
     private static final int HASH_INTERATIONS = 1024;
@@ -30,6 +31,10 @@ public class UserService {
      * token缓存时间 15天
      */
     private static final long CONVERSATION_KEEP_TIMEOUT = 60 * 60 * 24 * 15;
+    /**
+     * 验证码缓存时间 10分钟
+     */
+    private static final long VERIFY_CODE_TIMEOUT = 10 * 60;
 
     @Resource
     private UserMapper userMapper;
@@ -40,13 +45,23 @@ public class UserService {
     /**
      * 用户注册
      *
-     * @param user
+     * @param userParam
      * @return
      * @throws Exception
      */
-    public Long registerUser(User user) throws Exception {
-        User userInfo = userMapper.findByUsername(user.getUsername());
-        if (userInfo != null) throw new BaseException("用户名已存在");
+    public Long registerUser(UserParam userParam) throws Exception {
+        //参数校验
+        if (StringUtils.isBlank(userParam.getUsername())) throw new BaseException("手机号码不能为空");
+        if (StringUtils.isBlank(userParam.getPassword())) throw new BaseException("登录密码不能为空");
+        if (StringUtils.isBlank(userParam.getVerifyCode())) throw new BaseException("验证码不能为空");
+        //重复注册校验
+        if (userMapper.findByUsername(userParam.getUsername()) != null) throw new BaseException("该手机号码已注册，请直接登录");
+        //判断验证码
+        String smsRegVerifyCode = redisUtils.getStr(GlobalConstants.CacheKey.SMS_REG_VERIFY_CODE_KEY + userParam.getUsername());
+        if (StringUtils.isBlank(smsRegVerifyCode) || !smsRegVerifyCode.equals(userParam.getVerifyCode())) {
+            throw new BaseException("验证码错误");
+        }
+        User user = BeanMapper.map(userParam, User.class);
         byte[] salt = Digests.generateSalt(SALT_SIZE);
         user.setSalt(Encodes.encodeHex(salt));
         byte[] hashPassword = Digests.sha1(user.getPassword().getBytes(), salt, HASH_INTERATIONS);
@@ -67,33 +82,74 @@ public class UserService {
         //参数校验
         if (StringUtils.isBlank(userParam.getUsername())) throw new BaseException("用户名不能为空");
         if (StringUtils.isBlank(userParam.getPassword())) throw new BaseException("密码不能为空");
-        //密码错误次数
-        final Integer pwdErrorCount = redisUtils.getInt(CacheKey.PWD_ERROR_COUNT_KEY + userParam.getUsername());
-        if (pwdErrorCount != null && pwdErrorCount >= MAX_PWD_ERROR_COUNT) {
-            throw new BaseException("密码错误次数过多,账户已被锁定");
-        }
+        if (!GlobalConstants.LoginMode.validate(userParam.getLoginMode())) throw new BaseException("登录方式参数异常");
         //判断用户是否存在
         User userInfo = userMapper.findByUsername(userParam.getUsername());
-        if (userInfo == null) throw new BaseException("用户名或密码错误");
-        byte[] hashPassword = Digests.sha1(userParam.getPassword().getBytes(), Encodes.decodeHex(userInfo.getSalt()), HASH_INTERATIONS);
-        if (!Encodes.encodeHex(hashPassword).equals(userInfo.getPassword())) {
-            //记录用户名密码错误次数
-            redisUtils.incr(CacheKey.PWD_ERROR_COUNT_KEY + userParam.getUsername(), 1L);
-            throw new BaseException("用户名或密码错误");
-        } else {
-            //清除密码错误次数
-            redisUtils.delete(CacheKey.PWD_ERROR_COUNT_KEY + userParam.getUsername());
+        //短信登录
+        if (GlobalConstants.LoginMode.SMS.equals(userParam.getLoginMode())) {
+            String smsLoginVerifyCode = redisUtils.getStr(GlobalConstants.CacheKey.SMS_LOGIN_VERIFY_CODE_KEY + userParam.getUsername());
+            if (StringUtils.isBlank(smsLoginVerifyCode) || !smsLoginVerifyCode.equals(userParam.getVerifyCode())) {
+                throw new BaseException("验证码错误");
+            } else {
+                //第一次登录，注册为用户
+                if (userInfo == null) {
+                    userInfo = new User(userParam.getUsername(), smsLoginVerifyCode);
+                    byte[] salt = Digests.generateSalt(SALT_SIZE);
+                    userInfo.setSalt(Encodes.encodeHex(salt));
+                    byte[] hashPassword = Digests.sha1(userInfo.getPassword().getBytes(), salt, HASH_INTERATIONS);
+                    userInfo.setPassword(Encodes.encodeHex(hashPassword));
+                    userInfo.setRegTime(new Date());
+                    userMapper.insert(userInfo);
+                }
+            }
         }
+        //密码登录
+        else if (GlobalConstants.LoginMode.PWD.equals(userParam.getLoginMode())) {
+            //密码错误次数
+            final Integer pwdErrorCount = redisUtils.getInt(GlobalConstants.CacheKey.PWD_ERROR_COUNT_KEY + userParam.getUsername());
+            if (pwdErrorCount != null && pwdErrorCount >= MAX_PWD_ERROR_COUNT) {
+                throw new BaseException("密码错误次数过多,账户已被锁定");
+            }
+            if (userInfo == null) throw new BaseException("用户名或密码错误");
+            byte[] hashPassword = Digests.sha1(userParam.getPassword().getBytes(), Encodes.decodeHex(userInfo.getSalt()), HASH_INTERATIONS);
+            if (!Encodes.encodeHex(hashPassword).equals(userInfo.getPassword())) {
+                //记录用户名密码错误次数
+                redisUtils.incr(GlobalConstants.CacheKey.PWD_ERROR_COUNT_KEY + userParam.getUsername(), 1L);
+                throw new BaseException("用户名或密码错误");
+            } else {
+                //登录成功清除密码错误次数
+                redisUtils.delete(GlobalConstants.CacheKey.PWD_ERROR_COUNT_KEY + userParam.getUsername());
+            }
+        }
+
         //获取历史缓存并清除
-        UserEntity historyUserInfo = redisUtils.get(CacheKey.USER_ID_KEY + userInfo.getId().toString(), UserEntity.class);
+        UserEntity historyUserInfo = redisUtils.get(GlobalConstants.CacheKey.USER_ID_KEY + userInfo.getId().toString(), UserEntity.class);
         if (historyUserInfo != null) {
-            redisUtils.delete(CacheKey.TOKEN_KEY + historyUserInfo.getToken());
+            redisUtils.delete(GlobalConstants.CacheKey.TOKEN_KEY + historyUserInfo.getToken());
         }
         //存入新的用户缓存
         UserEntity newUserInfo = BeanMapper.map(userInfo, UserEntity.class);
         newUserInfo.setToken(token);
-        redisUtils.setex(CacheKey.USER_ID_KEY + newUserInfo.getId().toString(), newUserInfo, CONVERSATION_KEEP_TIMEOUT);
-        redisUtils.setex(CacheKey.TOKEN_KEY + token, newUserInfo, CONVERSATION_KEEP_TIMEOUT);
+        redisUtils.setex(GlobalConstants.CacheKey.USER_ID_KEY + newUserInfo.getId().toString(), newUserInfo, CONVERSATION_KEEP_TIMEOUT);
+        redisUtils.setex(GlobalConstants.CacheKey.TOKEN_KEY + token, newUserInfo, CONVERSATION_KEEP_TIMEOUT);
+    }
+
+    /**
+     * 发送验证码
+     *
+     * @param userParam
+     */
+    public void sendVerifyCode(UserParam userParam) throws Exception {
+        //参数校验
+        if (StringUtils.isBlank(userParam.getUsername())) throw new BaseException("用户名不能为空");
+        String key = GlobalConstants.VerifyCodeType.getCacheKey(userParam.getVerifyCodeType());
+        if (key == null) throw new BaseException("参数错误");
+        key = key + userParam.getUsername();
+        //验证码
+        String verifyCode = Identities.getRandNumber(6);
+        //缓存验证码
+        redisUtils.setex(key, verifyCode, VERIFY_CODE_TIMEOUT);
+        LOGGER.info("发送验证码={}，类型={}，手机号码={}成功", verifyCode, userParam.getVerifyCodeType(), userParam.getUsername());
     }
 
 }
