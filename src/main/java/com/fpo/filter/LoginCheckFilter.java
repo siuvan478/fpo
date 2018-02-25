@@ -4,7 +4,7 @@ package com.fpo.filter;
 import com.alibaba.druid.util.PatternMatcher;
 import com.alibaba.druid.util.ServletPathMatcher;
 import com.alibaba.fastjson.JSON;
-import com.fpo.base.CacheKey;
+import com.fpo.base.GlobalConstants;
 import com.fpo.base.ResultData;
 import com.fpo.model.UserEntity;
 import com.fpo.utils.LoginUtil;
@@ -77,7 +77,7 @@ public class LoginCheckFilter implements Filter {
                 return;
             }
             //token失效
-            UserEntity userEntity = redisUtils.get(CacheKey.TOKEN_KEY + token, UserEntity.class);
+            UserEntity userEntity = redisUtils.get(GlobalConstants.CacheKey.TOKEN_KEY + token, UserEntity.class);
             if (userEntity == null) {
                 this.redirect(httpResponse, UNLOGIN_MESSAGE, UNLOGIN_CODE);
                 return;

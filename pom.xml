@@ -31,6 +31,7 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<!--Spring thymeleaf-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -146,6 +147,13 @@
 			<version>18.0</version>
 		</dependency>
 		<!-- GENERAL UTILS end -->
+
+		<!--POI-->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.14</version>
+		</dependency>
 
 		<dependency>
 			<groupId>net.sf.dozer</groupId>

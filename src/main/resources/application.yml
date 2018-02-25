@@ -53,6 +53,9 @@ spring:
       max-idle: 8
     ## 连接超时时间（毫秒）
     timeout: 0
+  thymeleaf:
+    mode: HTML5
+    cache: false
 
 mybatis:
   mapper-locations: classpath:mapping/*.xml
@@ -66,5 +69,5 @@ pagehelper:
     params: count=countSql
 
 #不用登录访问的URL
-login.excludePaths: /favicon.ico, /login, /ex1
+login.excludePaths: /favicon.ico, /login, /ex1, /template/*, /data/upload, /index2
 
