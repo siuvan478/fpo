@@ -1,6 +1,8 @@
 package com.fpo.controller;
 
 
+import com.fpo.base.ResultData;
+import com.fpo.model.OrderDetails;
 import com.fpo.model.Template;
 import com.fpo.service.TemplateService;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -8,13 +10,14 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.util.List;
 
 
@@ -27,8 +30,8 @@ public class TemplateController {
     @Resource
     private TemplateService templateService;
 
-    @RequestMapping(value = "/template/download", method = RequestMethod.GET)
-    public void downloadTemplate(HttpServletRequest request, HttpServletResponse response)
+    @RequestMapping(value = "/front/download", method = RequestMethod.GET)
+    public void downloadTemplate(HttpServletResponse response)
             throws Exception {
         List<Template> headers = templateService.getAll();
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -44,16 +47,15 @@ public class TemplateController {
         workbook.write(response.getOutputStream());
     }
 
-    //导入
-    @RequestMapping(value = "/index2", method = RequestMethod.GET)
+    @RequestMapping(value = "/front/index2", method = RequestMethod.GET)
     public String index() {
         return "index";
     }
 
-    //导入
-    @RequestMapping(value = "/data/upload", method = RequestMethod.POST)
-    public void uploadData(@RequestParam(value = "filename") MultipartFile file)
+    @RequestMapping(value = "/front/upload", method = RequestMethod.POST)
+    @ResponseBody
+    public ResultData<List<OrderDetails>> uploadData(@RequestParam(value = "filename") MultipartFile file)
             throws Exception {
-        templateService.excelImport(file);
+        return new ResultData<>(templateService.excelImport(file));
     }
 }

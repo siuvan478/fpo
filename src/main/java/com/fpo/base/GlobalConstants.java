@@ -1,7 +1,17 @@
 package com.fpo.base;
 
 
+import org.apache.commons.lang3.StringUtils;
+
 public class GlobalConstants {
+
+    /**
+     * 状态 0=删除 1=正常
+     */
+    public static class State {
+        public static final Integer DELETED = 0;
+        public static final Integer NORMAL = 1;
+    }
 
     /**
      * 登录方式 1=短信 2=密码
@@ -33,6 +43,44 @@ public class GlobalConstants {
     }
 
     /**
+     * 发票方式 0=不用发票 1=增值税普票 2=增值税专票
+     */
+    public static class InvoiceMode {
+        public static final Integer DO_NOT = 0;
+        public static final Integer GENERAL = 1;
+        public static final Integer SPECIAL = 2;
+
+        public static boolean validate(Integer invoiceMode) {
+            return invoiceMode != null && (invoiceMode.equals(DO_NOT) || invoiceMode.equals(GENERAL) || invoiceMode.equals(SPECIAL));
+        }
+    }
+
+    /**
+     * 报价要求 1=报价含税 2=报价含运费
+     */
+    public static class QuoteMode {
+        public static final String CONTAIN_TAX = "1";
+        public static final String CONTAIN_FREIGHT = "2";
+
+        public static boolean validate(String quoteMode) {
+            return StringUtils.isNotBlank(quoteMode);
+        }
+    }
+
+    /**
+     * 付款方式 0=其他 1=收货后付款 2=预付款
+     */
+    public static class PaymentMode {
+        public static final Integer OTHER = 0;
+        public static final Integer PAY_AFTER_RECEIVING = 1;
+        public static final Integer ADVANCE_PAY = 2;
+
+        public static boolean validate(Integer paymentMode) {
+            return paymentMode != null && (paymentMode.equals(OTHER) || paymentMode.equals(PAY_AFTER_RECEIVING) || paymentMode.equals(ADVANCE_PAY));
+        }
+    }
+
+    /**
      * Redis缓存键
      */
     public static class CacheKey {
@@ -48,6 +96,8 @@ public class GlobalConstants {
         public static final String SMS_LOGIN_VERIFY_CODE_KEY = "security:verifyCode:smsLogin:";
         //密码错误次数统计
         public static final String PWD_ERROR_COUNT_KEY = "security:pwdErrorCount:";
+        //excel模板列表
+        public static final String EXCEL_TEMPLATE_LIST_KEY = "data:template";
 
         public static final String LIST = "list";
         public static final String CITY_KEY = "data:city";

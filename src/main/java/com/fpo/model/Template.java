@@ -1,11 +1,18 @@
 package com.fpo.model;
 
-public class Template {
+import java.io.Serializable;
+
+public class Template implements Serializable{
+    private static final long serialVersionUID = -3229858416443989062L;
     private Long id;
 
     private String title;
 
-    private String columnName;
+    private String filed;
+
+    private Integer javaType;
+
+    private Integer index;
 
     public Long getId() {
         return id;
@@ -23,11 +30,27 @@ public class Template {
         this.title = title;
     }
 
-    public String getColumnName() {
-        return columnName;
+    public String getFiled() {
+        return filed;
     }
 
-    public void setColumnName(String columnName) {
-        this.columnName = columnName;
+    public void setFiled(String filed) {
+        this.filed = filed;
+    }
+
+    public Integer getJavaType() {
+        return javaType;
+    }
+
+    public void setJavaType(Integer javaType) {
+        this.javaType = javaType;
+    }
+
+    public Integer getIndex() {
+        return index;
+    }
+
+    public void setIndex(Integer index) {
+        this.index = index;
     }
 }

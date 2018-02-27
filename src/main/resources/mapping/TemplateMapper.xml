@@ -4,31 +4,33 @@
   <resultMap id="BaseResultMap" type="com.fpo.model.Template" >
     <id column="id" property="id" jdbcType="BIGINT" />
     <result column="title" property="title" jdbcType="VARCHAR" />
-    <result column="column_name" property="columnName" jdbcType="VARCHAR" />
+    <result column="filed" property="filed" jdbcType="VARCHAR" />
+    <result column="java_type" property="javaType" jdbcType="TINYINT" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from fpo_template
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.fpo.model.Template" >
-    insert into fpo_template (id, title, column_name
-      )
-    values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{columnName,jdbcType=VARCHAR}
-      )
+    insert into fpo_template (id, title, filed, 
+      java_type)
+    values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{filed,jdbcType=VARCHAR}, 
+      #{javaType,jdbcType=TINYINT})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.fpo.model.Template" >
     update fpo_template
     set title = #{title,jdbcType=VARCHAR},
-      column_name = #{columnName,jdbcType=VARCHAR}
+      filed = #{filed,jdbcType=VARCHAR},
+      java_type = #{javaType,jdbcType=TINYINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select id, title, column_name
+    select id, title, filed, java_type
     from fpo_template
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap" >
-    select id, title, column_name
+    select id, title, filed, java_type
     from fpo_template
   </select>
 </mapper>

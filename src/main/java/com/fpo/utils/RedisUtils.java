@@ -1,6 +1,7 @@
 package com.fpo.utils;
 
 
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -135,7 +136,25 @@ public class RedisUtils {
      * @param clazz 类型
      * @return
      */
-    public <T> T getJson(String key, Class<T> clazz) {
-        return null;
+    public <T> T getList(String key, Class<T> clazz) {
+        return JsonMapper.nonDefaultMapper().fromJson(stringRedisTemplate.boundValueOps(key).get(), clazz);
+    }
+
+    /**
+     * 将value对象以JSON格式写入缓存
+     *
+     * @param key
+     * @param value
+     * @param time  失效时间(秒)
+     */
+    public void setList(String key, Object value, Long time) {
+        stringRedisTemplate.opsForValue().set(key, JSONObject.toJSONString(value));
+        if (time != null && time > 0) {
+            stringRedisTemplate.expire(key, time, TimeUnit.SECONDS);
+        }
+    }
+
+    public void setList(String key, Object value) {
+        this.setList(key, value, 0L);
     }
 }
