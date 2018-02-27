@@ -11,6 +11,7 @@ public class GlobalConstants {
     public static class State {
         public static final Integer DELETED = 0;
         public static final Integer NORMAL = 1;
+        public static final Integer STOP_QUOTE = 2;//暂停报价
     }
 
     /**

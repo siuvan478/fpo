@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fpo.mapper.QuoteDetailsMapper">
+    <resultMap id="BaseResultMap" type="com.fpo.model.QuoteDetails">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="header_id" property="headerId" jdbcType="BIGINT"/>
+        <result column="order_detail_id" property="orderDetailId" jdbcType="BIGINT"/>
+        <result column="unit_price" property="unitPrice" jdbcType="DECIMAL"/>
+        <result column="quantity" property="quantity" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP"/>
+        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from fpo_quote_details
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <delete id="deleteByHeaderId" parameterType="java.lang.Long">
+    update fpo_quote_details set status = 0, update_date = now()
+    where header_id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.fpo.model.QuoteDetails">
+    insert into fpo_quote_details (id, header_id, order_detail_id, 
+      unit_price, quantity, status, 
+      create_date, update_date)
+    values (#{id,jdbcType=BIGINT}, #{headerId,jdbcType=BIGINT}, #{orderDetailId,jdbcType=BIGINT}, 
+      #{unitPrice,jdbcType=DECIMAL}, #{quantity,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{updateDate,jdbcType=TIMESTAMP})
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.fpo.model.QuoteDetails">
+    update fpo_quote_details
+    set header_id = #{headerId,jdbcType=BIGINT},
+      order_detail_id = #{orderDetailId,jdbcType=BIGINT},
+      unit_price = #{unitPrice,jdbcType=DECIMAL},
+      quantity = #{quantity,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    select id, header_id, order_detail_id, unit_price, quantity, status, create_date, 
+    update_date
+    from fpo_quote_details
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select id, header_id, order_detail_id, unit_price, quantity, status, create_date, update_date
+    from fpo_quote_details
+  </select>
+    <select id="selectByHeaderId" resultMap="BaseResultMap">
+        select id, header_id, order_detail_id, unit_price, quantity, status, create_date, update_date
+        from fpo_quote_details where status = 1 and header_id = #{id}
+    </select>
+</mapper>

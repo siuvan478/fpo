@@ -17,7 +17,7 @@
     <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
   </resultMap>
   <delete id="deleteByHeaderId" parameterType="java.lang.Long">
-    update fpo_order_details set `status` = 0
+    update fpo_order_details set `status` = 0, update_date = now()
     where header_id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
@@ -61,5 +61,10 @@
     select id, header_id, number, name, spec, brands, description, quantity, unit, picture, 
     status, create_date, update_date
     from fpo_order_details
+  </select>
+  <select id="selectByHeaderId" resultMap="BaseResultMap" parameterType="long">
+    select id, header_id, number, name, spec, brands, description, quantity, unit, picture,
+    status, create_date, update_date
+    from fpo_order_details where status = 1 and header_id = #{id}
   </select>
 </mapper>

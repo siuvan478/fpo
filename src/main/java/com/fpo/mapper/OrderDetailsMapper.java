@@ -1,6 +1,7 @@
 package com.fpo.mapper;
 
 import com.fpo.model.OrderDetails;
+
 import java.util.List;
 
 public interface OrderDetailsMapper {
@@ -15,4 +16,6 @@ public interface OrderDetailsMapper {
     int updateByPrimaryKey(OrderDetails record);
 
     void deleteByHeaderId(Long id);
+
+    List<OrderDetails> selectByHeaderId(Long id);
 }

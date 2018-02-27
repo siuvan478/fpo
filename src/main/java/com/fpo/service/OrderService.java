@@ -9,6 +9,7 @@ import com.fpo.model.OrderDetailsParam;
 import com.fpo.model.OrderHeader;
 import com.fpo.model.OrderParam;
 import com.fpo.utils.BeanMapper;
+import com.fpo.utils.LoginUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,15 @@ public class OrderService {
     @Resource
     private OrderDetailsMapper orderDetailsMapper;
 
+    /**
+     * 新增或修改报价单
+     *
+     * @param orderParam
+     * @return
+     * @throws Exception
+     */
     @Transactional
     public Long addOrUpdate(OrderParam orderParam) throws Exception {
-        Long result = null;
         this.validateOrderInfo(orderParam);
         //新增
         if (orderParam.getId() == null) {
@@ -41,9 +48,15 @@ public class OrderService {
                     orderDetailsMapper.insert(detail);
                 }
             }
-            result = header.getId();
-        } else {
+
+            return header.getId();
+        }
+        //修改
+        else {
             OrderHeader header = orderHeaderMapper.selectByPrimaryKey(orderParam.getId());
+            if (header == null) {
+                throw new BaseException("采购单不存在");
+            }
             BeanMapper.copy(orderParam, header);
             header.setUpdateDate(new Date());
             orderHeaderMapper.updateByPrimaryKey(header);
@@ -55,8 +68,44 @@ public class OrderService {
                     orderDetailsMapper.insert(detail);
                 }
             }
-            result = header.getId();
+
+            return header.getId();
         }
+    }
+
+    /**
+     * 暂停报价
+     *
+     * @param p 采购单ID
+     * @throws Exception
+     */
+    public void stopQuote(OrderParam p) throws Exception {
+        if (p.getId() == null) {
+            throw new BaseException("参数异常");
+        }
+        OrderHeader orderHeader = orderHeaderMapper.selectByPrimaryKey(p.getId());
+        if (orderHeader == null || !orderHeader.getUserId().equals(LoginUtil.getUserId())) {
+            throw new BaseException("采购单不存在");
+        }
+        orderHeader.setUpdateDate(new Date());
+        orderHeader.setStatus(GlobalConstants.State.STOP_QUOTE);
+        orderHeaderMapper.updateByPrimaryKey(orderHeader);
+    }
+
+    /**
+     * 预览采购单
+     *
+     * @param headerId
+     * @return
+     * @throws Exception
+     */
+    public OrderParam getOrderInfo(Long headerId) throws Exception {
+        OrderHeader orderHeader = orderHeaderMapper.selectByPrimaryKey(headerId);
+        if (orderHeader == null || !orderHeader.getUserId().equals(LoginUtil.getUserId())) {
+            throw new BaseException("采购单不存在");
+        }
+        OrderParam result = BeanMapper.map(orderHeader, OrderParam.class);
+        result.setDetails(BeanMapper.mapList(orderDetailsMapper.selectByHeaderId(headerId), OrderDetailsParam.class));
         return result;
     }
 

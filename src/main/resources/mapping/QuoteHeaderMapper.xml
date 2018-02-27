@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fpo.mapper.QuoteHeaderMapper" >
+  <resultMap id="BaseResultMap" type="com.fpo.model.QuoteHeader" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="order_header_id" property="orderHeaderId" jdbcType="BIGINT" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+    <result column="contact" property="contact" jdbcType="VARCHAR" />
+    <result column="contact_info" property="contactInfo" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from fpo_quote_header
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.fpo.model.QuoteHeader" useGeneratedKeys="true" keyProperty="id">
+    insert into fpo_quote_header (id, order_header_id, remark, 
+      company_name, contact, contact_info, 
+      status, user_id, create_date, 
+      update_date)
+    values (#{id,jdbcType=BIGINT}, #{orderHeaderId,jdbcType=BIGINT}, #{remark,jdbcType=VARCHAR}, 
+      #{companyName,jdbcType=VARCHAR}, #{contact,jdbcType=VARCHAR}, #{contactInfo,jdbcType=VARCHAR}, 
+      #{status,jdbcType=TINYINT}, #{userId,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.fpo.model.QuoteHeader" >
+    update fpo_quote_header
+    set order_header_id = #{orderHeaderId,jdbcType=BIGINT},
+      remark = #{remark,jdbcType=VARCHAR},
+      company_name = #{companyName,jdbcType=VARCHAR},
+      contact = #{contact,jdbcType=VARCHAR},
+      contact_info = #{contactInfo,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      user_id = #{userId,jdbcType=BIGINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, order_header_id, remark, company_name, contact, contact_info, status, 
+    user_id, create_date, update_date
+    from fpo_quote_header
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, order_header_id, remark, company_name, contact, contact_info, status, 
+    user_id, create_date, update_date
+    from fpo_quote_header
+  </select>
+</mapper>

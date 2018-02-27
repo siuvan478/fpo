@@ -2,11 +2,9 @@ package com.fpo;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fpo.mapper.UserMapper;
-import com.fpo.model.OrderDetailsParam;
-import com.fpo.model.OrderParam;
-import com.fpo.model.User;
-import com.fpo.model.UserParam;
+import com.fpo.model.*;
 import com.fpo.service.OrderService;
+import com.fpo.service.QuoteService;
 import com.fpo.service.UserService;
 import com.fpo.utils.RedisUtils;
 import com.github.pagehelper.PageHelper;
@@ -18,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @RunWith(SpringRunner.class)
@@ -33,6 +32,9 @@ public class FpoApplicationTests {
 
     @Resource
     private OrderService orderService;
+
+    @Resource
+    private QuoteService quoteService;
 
     @Test
     public void contextLoads() {
@@ -93,6 +95,24 @@ public class FpoApplicationTests {
 
         p.getDetails().add(d);
         orderService.addOrUpdate(p);
+    }
+
+    @Test
+    public void testQuoteAddOrUpdate() throws Exception {
+        QuoteParam p = new QuoteParam();
+        p.setOrderHeaderId(4L);
+        p.setRemark("kahjfajklsfhajkldfas");
+        p.setCompanyName("first company");
+        p.setContact("Siuvan");
+        p.setContactInfo("17620021827");
+
+        QuoteDetailsParam d = new QuoteDetailsParam();
+        d.setOrderDetailId(3L);
+        d.setQuantity(8000);
+        d.setUnitPrice(new BigDecimal(0.5));
+        p.getDetails().add(d);
+
+        quoteService.addOrUpdate(p);
     }
 
 }
