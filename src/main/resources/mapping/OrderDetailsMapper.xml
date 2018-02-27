@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fpo.mapper.OrderDetailsMapper" >
+  <resultMap id="BaseResultMap" type="com.fpo.model.OrderDetails" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="header_id" property="headerId" jdbcType="BIGINT" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="spec" property="spec" jdbcType="VARCHAR" />
+    <result column="brands" property="brands" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="quantity" property="quantity" jdbcType="INTEGER" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="picture" property="picture" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <delete id="deleteByHeaderId" parameterType="java.lang.Long">
+    update fpo_order_details set `status` = 0
+    where header_id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from fpo_order_details
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.fpo.model.OrderDetails" >
+    insert into fpo_order_details (id, header_id, number, 
+      name, spec, brands, 
+      description, quantity, unit, 
+      picture, create_date,
+      update_date)
+    values (#{id,jdbcType=BIGINT}, #{headerId,jdbcType=BIGINT}, #{number,jdbcType=VARCHAR}, 
+      #{name,jdbcType=VARCHAR}, #{spec,jdbcType=VARCHAR}, #{brands,jdbcType=VARCHAR}, 
+      #{description,jdbcType=VARCHAR}, #{quantity,jdbcType=INTEGER}, #{unit,jdbcType=VARCHAR}, 
+      #{picture,jdbcType=VARCHAR}, NOW(), NOW())
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.fpo.model.OrderDetails" >
+    update fpo_order_details
+    set header_id = #{headerId,jdbcType=BIGINT},
+      number = #{number,jdbcType=VARCHAR},
+      name = #{name,jdbcType=VARCHAR},
+      spec = #{spec,jdbcType=VARCHAR},
+      brands = #{brands,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      quantity = #{quantity,jdbcType=INTEGER},
+      unit = #{unit,jdbcType=VARCHAR},
+      picture = #{picture,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, header_id, number, name, spec, brands, description, quantity, unit, picture, 
+    status, create_date, update_date
+    from fpo_order_details
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, header_id, number, name, spec, brands, description, quantity, unit, picture, 
+    status, create_date, update_date
+    from fpo_order_details
+  </select>
+</mapper>

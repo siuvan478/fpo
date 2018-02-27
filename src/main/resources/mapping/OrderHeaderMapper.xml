@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fpo.mapper.OrderHeaderMapper">
+    <resultMap id="BaseResultMap" type="com.fpo.model.OrderHeader">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="invoice_mode" jdbcType="TINYINT" property="invoiceMode"/>
+        <result column="quote_mode" jdbcType="VARCHAR" property="quoteMode"/>
+        <result column="payment_mode" jdbcType="TINYINT" property="paymentMode"/>
+        <result column="payment_remark" jdbcType="VARCHAR" property="paymentRemark"/>
+        <result column="receipt_date" jdbcType="TIMESTAMP" property="receiptDate"/>
+        <result column="receipt_address" jdbcType="VARCHAR" property="receiptAddress"/>
+        <result column="remark" jdbcType="VARCHAR" property="remark"/>
+        <result column="company_name" jdbcType="VARCHAR" property="companyName"/>
+        <result column="contact" jdbcType="VARCHAR" property="contact"/>
+        <result column="contact_info" jdbcType="VARCHAR" property="contactInfo"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+        <result column="user_id" jdbcType="BIGINT" property="userId"/>
+        <result column="create_date" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="update_date" jdbcType="TIMESTAMP" property="updateDate"/>
+    </resultMap>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from fpo_order_header
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+    <insert id="insert" parameterType="com.fpo.model.OrderHeader" keyProperty="id" useGeneratedKeys="true">
+    insert into fpo_order_header (id, title, invoice_mode, 
+      quote_mode, payment_mode, payment_remark, 
+      receipt_date, receipt_address, remark, 
+      company_name, contact, contact_info, 
+      user_id, create_date,
+      update_date)
+    values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{invoiceMode,jdbcType=TINYINT}, 
+      #{quoteMode,jdbcType=VARCHAR}, #{paymentMode,jdbcType=TINYINT}, #{paymentRemark,jdbcType=VARCHAR}, 
+      #{receiptDate,jdbcType=TIMESTAMP}, #{receiptAddress,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, 
+      #{companyName,jdbcType=VARCHAR}, #{contact,jdbcType=VARCHAR}, #{contactInfo,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=BIGINT}, NOW(),
+      NOW())
+  </insert>
+    <update id="updateByPrimaryKey" parameterType="com.fpo.model.OrderHeader">
+    update fpo_order_header
+    set title = #{title,jdbcType=VARCHAR},
+      invoice_mode = #{invoiceMode,jdbcType=TINYINT},
+      quote_mode = #{quoteMode,jdbcType=VARCHAR},
+      payment_mode = #{paymentMode,jdbcType=TINYINT},
+      payment_remark = #{paymentRemark,jdbcType=VARCHAR},
+      receipt_date = #{receiptDate,jdbcType=TIMESTAMP},
+      receipt_address = #{receiptAddress,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      company_name = #{companyName,jdbcType=VARCHAR},
+      contact = #{contact,jdbcType=VARCHAR},
+      contact_info = #{contactInfo,jdbcType=VARCHAR},
+      status = #{status,jdbcType=TINYINT},
+      user_id = #{userId,jdbcType=BIGINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select id, title, invoice_mode, quote_mode, payment_mode, payment_remark, receipt_date, 
+    receipt_address, remark, company_name, contact, contact_info, status, user_id, create_date, 
+    update_date
+    from fpo_order_header
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectAll" resultMap="BaseResultMap">
+    select id, title, invoice_mode, quote_mode, payment_mode, payment_remark, receipt_date, 
+    receipt_address, remark, company_name, contact, contact_info, status, user_id, create_date, 
+    update_date
+    from fpo_order_header
+  </select>
+</mapper>
