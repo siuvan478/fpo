@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fpo.mapper.AttachmentMapper" >
+  <resultMap id="BaseResultMap" type="com.fpo.model.Attachment" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="biz_id" property="bizId" jdbcType="BIGINT" />
+    <result column="biz_type" property="bizType" jdbcType="TINYINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="suffix" property="suffix" jdbcType="VARCHAR" />
+    <result column="path" property="path" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from fpo_attachment
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.fpo.model.Attachment" >
+    insert into fpo_attachment (id, biz_id, biz_type, 
+      name, suffix, path, 
+      user_id, status, create_date
+      )
+    values (#{id,jdbcType=BIGINT}, #{bizId,jdbcType=BIGINT}, #{bizType,jdbcType=TINYINT}, 
+      #{name,jdbcType=VARCHAR}, #{suffix,jdbcType=VARCHAR}, #{path,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=BIGINT}, #{status,jdbcType=TINYINT}, #{createDate,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.fpo.model.Attachment" >
+    update fpo_attachment
+    set biz_id = #{bizId,jdbcType=BIGINT},
+      biz_type = #{bizType,jdbcType=TINYINT},
+      name = #{name,jdbcType=VARCHAR},
+      suffix = #{suffix,jdbcType=VARCHAR},
+      path = #{path,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      status = #{status,jdbcType=TINYINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, biz_id, biz_type, name, suffix, path, user_id, status, create_date
+    from fpo_attachment
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, biz_id, biz_type, name, suffix, path, user_id, status, create_date
+    from fpo_attachment
+  </select>
+</mapper>
