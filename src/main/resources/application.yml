@@ -69,5 +69,24 @@ pagehelper:
     params: count=countSql
 
 #不用登录访问的URL
-login.excludePaths: /favicon.ico, /login, /front/*
+login.excludePaths: /favicon.ico, /login, /forgetPassword, /sendVerifyCode, /register, /front/*
 
+#短信配置
+smsConfig:
+  accessKeyId: LTAI3vO5csdy8kFw
+  accessKeySecret: VuFEeS4V3i4dQDFWNNvnReZvL8XH27
+  signName: 人人采购
+
+#数据词典
+dictConfig:
+  invoiceModeMap:
+    0: 不用发票
+    1: 增值税普票
+    2: 增值税专票
+  quoteModeMap:
+    1:  报价含税
+    2:  报价含运费
+  paymentModeMap:
+    0: 其他
+    1: 收货后付款
+    2: 预付款

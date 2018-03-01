@@ -37,6 +37,11 @@ public class OrderParam implements Serializable {
 
     private Long userId;
 
+    //for app
+    private String invoiceModeName;
+    private String quoteModeName;
+    private String paymentModeName;
+
     public OrderParam() {
     }
 
@@ -150,5 +155,29 @@ public class OrderParam implements Serializable {
 
     public void setUserId(Long userId) {
         this.userId = userId;
+    }
+
+    public String getInvoiceModeName() {
+        return invoiceModeName;
+    }
+
+    public void setInvoiceModeName(String invoiceModeName) {
+        this.invoiceModeName = invoiceModeName;
+    }
+
+    public String getQuoteModeName() {
+        return quoteModeName;
+    }
+
+    public void setQuoteModeName(String quoteModeName) {
+        this.quoteModeName = quoteModeName;
+    }
+
+    public String getPaymentModeName() {
+        return paymentModeName;
+    }
+
+    public void setPaymentModeName(String paymentModeName) {
+        this.paymentModeName = paymentModeName;
     }
 }

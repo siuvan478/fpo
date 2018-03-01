@@ -1,10 +1,12 @@
 package com.fpo;
 
 import com.alibaba.fastjson.JSONObject;
+import com.fpo.aliyunoss.Demo;
 import com.fpo.mapper.UserMapper;
 import com.fpo.model.*;
 import com.fpo.service.OrderService;
 import com.fpo.service.QuoteService;
+import com.fpo.service.SmsService;
 import com.fpo.service.UserService;
 import com.fpo.utils.RedisUtils;
 import com.github.pagehelper.PageHelper;
@@ -16,6 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
+import java.io.File;
+import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -113,6 +117,29 @@ public class FpoApplicationTests {
         p.getDetails().add(d);
 
         quoteService.addOrUpdate(p);
+    }
+
+    @Resource
+    private SmsService smsService;
+
+    @Test
+    public void testSmsSend() throws Exception {
+        smsService.sendSms("17620021827", null, "SMS_0000", null);
+    }
+
+    @Resource
+    private Demo demo;
+
+    @Test
+    public void testFileUpload() throws Exception {
+        File f = new File("C:\\Users\\Administrator\\Desktop\\APIS\\text.txt");
+        demo.upload(new FileInputStream(f));
+    }
+
+    @Test
+    public void testDictConfig() throws Exception {
+        OrderParam orderInfo = orderService.getOrderInfo(4L);
+        System.out.println(JSONObject.toJSONString(orderInfo));
     }
 
 }

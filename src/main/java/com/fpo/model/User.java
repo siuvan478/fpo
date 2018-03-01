@@ -15,6 +15,10 @@ public class User {
 
     private Date regTime;
 
+    private String company;
+
+    private String position;
+
     public User() {
     }
 
@@ -70,5 +74,21 @@ public class User {
 
     public void setRegTime(Date regTime) {
         this.regTime = regTime;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
     }
 }

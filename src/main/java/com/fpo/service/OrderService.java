@@ -2,6 +2,7 @@ package com.fpo.service;
 
 import com.fpo.base.BaseException;
 import com.fpo.base.GlobalConstants;
+import com.fpo.core.DictConfig;
 import com.fpo.mapper.OrderDetailsMapper;
 import com.fpo.mapper.OrderHeaderMapper;
 import com.fpo.model.OrderDetails;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class OrderService {
@@ -26,6 +28,9 @@ public class OrderService {
 
     @Resource
     private OrderDetailsMapper orderDetailsMapper;
+
+    @Resource
+    private DictConfig dictConfig;
 
     /**
      * 新增或修改报价单
@@ -101,12 +106,27 @@ public class OrderService {
      */
     public OrderParam getOrderInfo(Long headerId) throws Exception {
         OrderHeader orderHeader = orderHeaderMapper.selectByPrimaryKey(headerId);
-        if (orderHeader == null || !orderHeader.getUserId().equals(LoginUtil.getUserId())) {
+        if (orderHeader == null) {
             throw new BaseException("采购单不存在");
         }
         OrderParam result = BeanMapper.map(orderHeader, OrderParam.class);
+        //数据词典
+        result.setInvoiceModeName(dictConfig.getInvoiceModeMap().get(result.getInvoiceMode()));
+        result.setQuoteModeName(dictConfig.getQuoteModeMap().get(result.getQuoteMode()));
+        result.setInvoiceModeName(dictConfig.getInvoiceModeMap().get(result.getInvoiceMode()));
         result.setDetails(BeanMapper.mapList(orderDetailsMapper.selectByHeaderId(headerId), OrderDetailsParam.class));
         return result;
+    }
+
+    /**
+     * 获取采购单明细
+     *
+     * @param headerId
+     * @return
+     * @throws Exception
+     */
+    public List<OrderDetails> getOrderDetails(Long headerId) throws Exception {
+        return orderDetailsMapper.selectByHeaderId(headerId);
     }
 
 

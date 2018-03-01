@@ -3,6 +3,7 @@ package com.fpo.controller;
 import com.fpo.base.BaseException;
 import com.fpo.base.ResultData;
 import com.fpo.model.UserParam;
+import com.fpo.model.UserProfile;
 import com.fpo.service.UserService;
 import com.fpo.utils.Identities;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,13 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    /**
+     * 用户注册
+     *
+     * @param userParam
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/register", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
     public ResultData<Boolean> register(@RequestBody UserParam userParam)
             throws Exception {
@@ -27,6 +35,14 @@ public class UserController {
         return new ResultData<>(true);
     }
 
+    /**
+     * 用户登录
+     *
+     * @param userParam
+     * @param response
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
     public ResultData<Boolean> login(@RequestBody UserParam userParam, HttpServletResponse response)
             throws Exception {
@@ -36,10 +52,57 @@ public class UserController {
         return new ResultData<>(true);
     }
 
+    /**
+     * 发送各种验证码
+     *
+     * @param userParam
+     * @return
+     * @throws Exception
+     */
     @RequestMapping(value = "/sendVerifyCode", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
     public ResultData<Boolean> sendVerifyCode(@RequestBody UserParam userParam)
             throws Exception {
         userService.sendVerifyCode(userParam);
+        return new ResultData<>(true);
+    }
+
+    /**
+     * 忘记密码
+     *
+     * @param userParam
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/forgetPassword", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+    public ResultData<Boolean> forgetPassword(@RequestBody UserParam userParam)
+            throws Exception {
+        userService.resetPassword(userParam);
+        return new ResultData<>(true);
+    }
+
+    /**
+     * 获取个人信息
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/profile", method = RequestMethod.GET)
+    public ResultData<UserProfile> updateProfile()
+            throws Exception {
+        return new ResultData<>(userService.getUserInfo());
+    }
+
+    /**
+     * 更新个人信息
+     *
+     * @param userParam
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value = "/profile/update", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+    public ResultData<Boolean> updateProfile(@RequestBody UserParam userParam)
+            throws Exception {
+        userService.updateProfile(userParam);
         return new ResultData<>(true);
     }
 

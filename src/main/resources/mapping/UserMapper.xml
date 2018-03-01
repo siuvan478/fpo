@@ -1,13 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.fpo.mapper.UserMapper">
     <resultMap id="BaseResultMap" type="com.fpo.model.User">
-        <id column="id" jdbcType="BIGINT" property="id"/>
-        <result column="nick_name" jdbcType="VARCHAR" property="nickName"/>
-        <result column="username" jdbcType="VARCHAR" property="username"/>
-        <result column="password" jdbcType="VARCHAR" property="password"/>
-        <result column="salt" jdbcType="VARCHAR" property="salt"/>
-        <result column="reg_time" jdbcType="TIMESTAMP" property="regTime"/>
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+        <result column="username" jdbcType="VARCHAR" property="username" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <result column="salt" jdbcType="VARCHAR" property="salt" />
+        <result column="reg_time" jdbcType="TIMESTAMP" property="regTime" />
+        <result column="company" jdbcType="VARCHAR" property="company" />
+        <result column="position" jdbcType="VARCHAR" property="position" />
     </resultMap>
 
     <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
@@ -15,12 +17,11 @@
     where id = #{id,jdbcType=BIGINT}
     </delete>
 
-    <insert id="insert" parameterType="com.fpo.model.User" useGeneratedKeys="true" keyProperty="id">
-    insert into fpo_user (id, nick_name, username, 
-      password, salt, reg_time
-      )
+    <insert id="insert" keyProperty="id" parameterType="com.fpo.model.User" useGeneratedKeys="true">
+    insert into fpo_user (id, nick_name, username, password, salt, reg_time, company, `position`)
     values (#{id,jdbcType=BIGINT}, #{nickName,jdbcType=VARCHAR}, #{username,jdbcType=VARCHAR}, 
-      #{password,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{regTime,jdbcType=TIMESTAMP}
+      #{password,jdbcType=VARCHAR}, #{salt,jdbcType=VARCHAR}, #{regTime,jdbcType=TIMESTAMP},
+      #{company,jdbcType=VARCHAR}, #{position,jdbcType=VARCHAR}
       )
     </insert>
 
@@ -30,23 +31,26 @@
       username = #{username,jdbcType=VARCHAR},
       password = #{password,jdbcType=VARCHAR},
       salt = #{salt,jdbcType=VARCHAR},
-      reg_time = #{regTime,jdbcType=TIMESTAMP}
+      reg_time = #{regTime,jdbcType=TIMESTAMP},
+      company = #{company,jdbcType=VARCHAR},
+      `position` = #{position,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
     </update>
 
     <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select id, nick_name, username, password, salt, reg_time
+    select id, nick_name, username, password, salt, reg_time, company, `position`
     from fpo_user
     where id = #{id,jdbcType=BIGINT}
     </select>
 
     <select id="selectAll" resultMap="BaseResultMap">
-    select id, nick_name, username, password, salt, reg_time
+    select id, nick_name, username, password, salt, reg_time, company, `position`
     from fpo_user
     </select>
 
     <select id="findByUsername" resultMap="BaseResultMap">
-        SELECT id, nick_name, username, password, salt, reg_time FROM fpo_user
+        select id, nick_name, username, password, salt, reg_time, company, `position`
+        FROM fpo_user
         WHERE username = #{username}
     </select>
 

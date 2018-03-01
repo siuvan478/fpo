@@ -1,7 +1,10 @@
 package com.fpo.base;
 
 
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 public class GlobalConstants {
 
@@ -29,18 +32,43 @@ public class GlobalConstants {
     /**
      * 短信验证码类型 1=注册 2=重置密码 3=短信登录
      */
-    public static class VerifyCodeType {
-        public static final Integer REGISTER = 1;
-        public static final Integer RESET_PWD = 2;
-        public static final Integer LOGIN = 3;
+    public enum VerifyCodeTypeEnum {
 
-        public static String getCacheKey(Integer verifyCodeType) {
-            if (verifyCodeType == null) return null;
-            if (REGISTER.equals(verifyCodeType)) return CacheKey.SMS_REG_VERIFY_CODE_KEY;
-            else if (RESET_PWD.equals(verifyCodeType)) return CacheKey.RESET_PWD_VERIFY_CODE_KEY;
-            else if (LOGIN.equals(verifyCodeType)) return CacheKey.SMS_LOGIN_VERIFY_CODE_KEY;
-            else return null;
+        REGISTER(1, CacheKey.SMS_REG_VERIFY_CODE_KEY, "SMS_126620104"),
+        RESET_PWD(2, CacheKey.RESET_PWD_VERIFY_CODE_KEY, "SMS_126635083"),
+        LOGIN(3, CacheKey.SMS_LOGIN_VERIFY_CODE_KEY, "SMS_126640083");
+
+        VerifyCodeTypeEnum(Integer type, String cacheKey, String templateCode) {
+            this.type = type;
+            this.cacheKey = cacheKey;
+            this.templateCode = templateCode;
         }
+
+        public Integer type;
+        public String cacheKey;
+        public String templateCode;
+
+        public static VerifyCodeTypeEnum getInstance(Integer type) {
+            List<VerifyCodeTypeEnum> enumList = EnumUtils.getEnumList(VerifyCodeTypeEnum.class);
+            for (VerifyCodeTypeEnum e : enumList) {
+                if (e.getType().equals(type))
+                    return e;
+            }
+            return null;
+        }
+
+        public Integer getType() {
+            return type;
+        }
+
+        public String getCacheKey() {
+            return cacheKey;
+        }
+
+        public String getTemplateCode() {
+            return templateCode;
+        }
+
     }
 
     /**

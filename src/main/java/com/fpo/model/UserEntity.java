@@ -12,6 +12,8 @@ public class UserEntity implements Serializable {
     private String username;
     private Date regTime;
     private String token;
+    private String company;
+    private String position;
 
     public UserEntity() {
     }
@@ -54,5 +56,21 @@ public class UserEntity implements Serializable {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
     }
 }

@@ -9,6 +9,7 @@ import com.fpo.model.QuoteDetailsParam;
 import com.fpo.model.QuoteHeader;
 import com.fpo.model.QuoteParam;
 import com.fpo.utils.BeanMapper;
+import com.fpo.utils.LoginUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +35,7 @@ public class QuoteService {
             header.setStatus(GlobalConstants.State.NORMAL);
             header.setCreateDate(new Date());
             header.setUpdateDate(new Date());
-            //header.setUserId(LoginUtil.getUserId());
+            header.setUserId(LoginUtil.getUserId());
             header.setUserId(6L);
             this.quoteHeaderMapper.insert(header);
             if (CollectionUtils.isNotEmpty(p.getDetails())) {
