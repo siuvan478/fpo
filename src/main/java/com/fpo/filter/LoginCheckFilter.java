@@ -5,6 +5,7 @@ import com.alibaba.druid.util.PatternMatcher;
 import com.alibaba.druid.util.ServletPathMatcher;
 import com.alibaba.fastjson.JSON;
 import com.fpo.base.GlobalConstants;
+import com.fpo.base.HttpStateEnum;
 import com.fpo.base.ResultData;
 import com.fpo.model.UserEntity;
 import com.fpo.utils.LoginUtil;
@@ -38,10 +39,6 @@ public class LoginCheckFilter implements Filter {
 
     private final static Logger logger = LoggerFactory.getLogger(LoginCheckFilter.class);
 
-    private final static Integer UNLOGIN_CODE = 401;
-
-    private final static String UNLOGIN_MESSAGE = "请先登录";
-
     private PatternMatcher pathMatcher = new ServletPathMatcher();
 
     @Value("${login.excludePaths}")
@@ -73,13 +70,13 @@ public class LoginCheckFilter implements Filter {
         final String token = httpRequest.getHeader("x-token");
         if (filterPath(httpRequest.getRequestURI())) {
             if (StringUtils.isBlank(token)) {
-                this.redirect(httpResponse, UNLOGIN_MESSAGE, UNLOGIN_CODE);
+                this.redirect(httpResponse);
                 return;
             }
             //token失效
             UserEntity userEntity = redisUtils.get(GlobalConstants.CacheKey.TOKEN_KEY + token, UserEntity.class);
             if (userEntity == null) {
-                this.redirect(httpResponse, UNLOGIN_MESSAGE, UNLOGIN_CODE);
+                this.redirect(httpResponse);
                 return;
             }
             LoginUtil.setUserJson(userEntity);
@@ -92,9 +89,9 @@ public class LoginCheckFilter implements Filter {
 
     }
 
-    private void redirect(HttpServletResponse response, String appMessage, Integer appCode)
+    private void redirect(HttpServletResponse response)
             throws IOException {
-        ResultData<String> resultData = new ResultData<>(null, appMessage, appCode);
+        ResultData<String> resultData = new ResultData<>(null, HttpStateEnum.ERROR.desc, HttpStateEnum.ERROR.code);
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         out.print(JSON.toJSONString(resultData));

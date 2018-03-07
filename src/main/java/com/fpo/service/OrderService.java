@@ -114,7 +114,14 @@ public class OrderService {
         result.setInvoiceModeName(dictConfig.getInvoiceModeMap().get(result.getInvoiceMode()));
         result.setQuoteModeName(dictConfig.getQuoteModeMap().get(result.getQuoteMode()));
         result.setInvoiceModeName(dictConfig.getInvoiceModeMap().get(result.getInvoiceMode()));
-        result.setDetails(BeanMapper.mapList(orderDetailsMapper.selectByHeaderId(headerId), OrderDetailsParam.class));
+        final List<OrderDetails> orderDetails = orderDetailsMapper.selectByHeaderId(headerId);
+        if (CollectionUtils.isNotEmpty(orderDetails)) {
+            for (OrderDetails d : orderDetails) {
+                final OrderDetailsParam odp = BeanMapper.map(d, OrderDetailsParam.class);
+                odp.setOrderDetailId(d.getId());
+                result.getDetails().add(odp);
+            }
+        }
         return result;
     }
 

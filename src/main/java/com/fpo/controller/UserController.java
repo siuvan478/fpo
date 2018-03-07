@@ -6,6 +6,7 @@ import com.fpo.model.UserParam;
 import com.fpo.model.UserProfile;
 import com.fpo.service.UserService;
 import com.fpo.utils.Identities;
+import com.fpo.utils.VerifyCodeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+
 
 @RestController
 public class UserController {
@@ -47,8 +49,8 @@ public class UserController {
     public ResultData<Boolean> login(@RequestBody UserParam userParam, HttpServletResponse response)
             throws Exception {
         String token = Identities.uuid2();
-        userService.login(userParam, token);
         response.setHeader("x-token", token);
+        userService.login(userParam, token);
         return new ResultData<>(true);
     }
 
@@ -103,6 +105,30 @@ public class UserController {
     public ResultData<Boolean> updateProfile(@RequestBody UserParam userParam)
             throws Exception {
         userService.updateProfile(userParam);
+        return new ResultData<>(true);
+    }
+
+    /**
+     * 获取验证码图片
+     *
+     * @param response
+     */
+    @RequestMapping(value = "/front/getVerifyCode", method = RequestMethod.GET)
+    public void getPictureVerifyCode(HttpServletResponse response) throws Exception {
+        response.setContentType("image/jpeg");
+        response.setHeader("Content-Disposition", "attachment;filename=verifyCode.jpg");
+        VerifyCodeUtils.outputImage(200, 80, response.getOutputStream(), userService.getPictureVerifyCode());
+    }
+
+    /**
+     * 单独校验图片验证码
+     *
+     * @param userParam
+     * @return
+     */
+    @RequestMapping(value = "/front/validVerifyCode", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+    public ResultData<Boolean> validPictureVerifyCode(@RequestBody UserParam userParam) throws Exception {
+        userService.validPictureVerifyCode(userParam);
         return new ResultData<>(true);
     }
 

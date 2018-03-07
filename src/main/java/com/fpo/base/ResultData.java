@@ -8,15 +8,20 @@ public class ResultData<T> {
     private Integer code;
 
     public ResultData(T data) {
-        this(data, "ok", 200);
+        this.data = data;
+        this.message = HttpStateEnum.OK.getDesc();
+        this.code = HttpStateEnum.OK.getCode();
     }
 
     public ResultData(T data, String message) {
-        this(data, message, 200);
+        this.data = data;
+        this.message = message;
+        this.code = HttpStateEnum.OK.getCode();
     }
 
     public ResultData(T data, Integer code) {
-        this(data, "ok", code);
+        this.data = data;
+        this.code = code;
     }
 
     public ResultData(T data, String message, Integer code) {

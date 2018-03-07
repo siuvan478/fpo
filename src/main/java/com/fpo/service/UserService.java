@@ -3,6 +3,7 @@ package com.fpo.service;
 import com.alibaba.fastjson.JSONObject;
 import com.fpo.base.BaseException;
 import com.fpo.base.GlobalConstants;
+import com.fpo.base.HttpStateEnum;
 import com.fpo.mapper.UserMapper;
 import com.fpo.model.User;
 import com.fpo.model.UserEntity;
@@ -110,16 +111,20 @@ public class UserService {
         }
         //密码登录
         else if (GlobalConstants.LoginMode.PWD.equals(userParam.getLoginMode())) {
-            //密码错误次数
-            final Integer pwdErrorCount = redisUtils.getInt(GlobalConstants.CacheKey.PWD_ERROR_COUNT_KEY + userParam.getUsername());
-            if (pwdErrorCount != null && pwdErrorCount >= MAX_PWD_ERROR_COUNT) {
-                throw new BaseException("密码错误次数过多,账户已被锁定");
-            }
+//            //密码错误次数
+//            final Integer pwdErrorCount = redisUtils.getInt(GlobalConstants.CacheKey.PWD_ERROR_COUNT_KEY + userParam.getUsername());
+//            if (pwdErrorCount != null && pwdErrorCount >= MAX_PWD_ERROR_COUNT) {
+//                throw new BaseException("密码错误次数过多,账户已被锁定");
+//            }
             if (userInfo == null) throw new BaseException("用户名或密码错误");
             byte[] hashPassword = Digests.sha1(userParam.getPassword().getBytes(), Encodes.decodeHex(userInfo.getSalt()), HASH_INTERATIONS);
             if (!Encodes.encodeHex(hashPassword).equals(userInfo.getPassword())) {
                 //记录用户名密码错误次数
                 redisUtils.incr(GlobalConstants.CacheKey.PWD_ERROR_COUNT_KEY + userParam.getUsername(), 1L);
+                final Integer errCount = redisUtils.getInt(GlobalConstants.CacheKey.PWD_ERROR_COUNT_KEY + userParam.getUsername());
+                if (errCount >= MAX_PWD_ERROR_COUNT) {
+                    throw new BaseException("密码连续错误超过3次", HttpStateEnum.NEED_CODE.getCode());
+                }
                 throw new BaseException("用户名或密码错误");
             } else {
                 //登录成功清除密码错误次数
@@ -221,6 +226,47 @@ public class UserService {
         byte[] hashPassword = Digests.sha1(userInfo.getPassword().getBytes(), salt, HASH_INTERATIONS);
         userInfo.setPassword(Encodes.encodeHex(hashPassword));
         userMapper.updateByPrimaryKey(userInfo);
+    }
+
+    /**
+     * 获取图片验证码
+     *
+     * @return
+     * @throws Exception
+     */
+    public String getPictureVerifyCode() throws Exception {
+        String token = LoginUtil.getHeader("x-token");
+        if (token == null) {
+            throw new BaseException("非法请求");
+        }
+        String verifyCode = VerifyCodeUtils.generateVerifyCode(4);
+        String key = GlobalConstants.CacheKey.PICTURE_VERIFY_CODE_KEY + token;
+        redisUtils.setex(key, verifyCode, 60L);
+        return verifyCode;
+    }
+
+    /**
+     * 单独验证图片验证码
+     *
+     * @param userParam
+     * @throws Exception
+     */
+    public void validPictureVerifyCode(UserParam userParam) throws Exception {
+        Integer errCount = redisUtils.getInt(GlobalConstants.CacheKey.PWD_ERROR_COUNT_KEY + userParam.getUsername());
+        if (errCount != null && errCount >= MAX_PWD_ERROR_COUNT) {
+            if (StringUtils.isBlank(userParam.getVerifyCode())) {
+                throw new BaseException("请填写验证码", HttpStateEnum.NEED_CODE.getCode());
+            }
+            String key = GlobalConstants.CacheKey.PICTURE_VERIFY_CODE_KEY + LoginUtil.getHeader("x-token");
+            String code = redisUtils.getStr(key);
+            if (StringUtils.isBlank(code)) {
+                throw new BaseException("验证码已过期", HttpStateEnum.NEED_CODE.getCode());
+            }
+            //不区分大小写
+            if (!StringUtils.equalsIgnoreCase(code, userParam.getVerifyCode())) {
+                throw new BaseException("验证码错误", HttpStateEnum.NEED_CODE.getCode());
+            }
+        }
     }
 
 }

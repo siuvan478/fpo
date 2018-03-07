@@ -8,11 +8,11 @@ public class BaseException extends Exception {
     private Integer errorCode;
 
     public BaseException() {
-        this("", 201);
+        this(HttpStateEnum.ERROR.getDesc(), HttpStateEnum.ERROR.getCode());
     }
 
     public BaseException(String message) {
-        this(message, 201);
+        this(message, HttpStateEnum.ERROR.getCode());
     }
 
     public BaseException(String message, Integer errorCode) {

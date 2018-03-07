@@ -46,6 +46,23 @@ public class LoginUtil {
         return null;
     }
 
+    /**
+     * 获取Header
+     *
+     * @param header
+     * @return
+     */
+    public static String getHeader(String header) {
+        if (header == null) {
+            return null;
+        }
+        HttpServletRequest httpRequest = requestThreadLocal.get();
+        if (httpRequest == null) {
+            return null;
+        }
+        return httpRequest.getHeader(header);
+    }
+
     public static UserEntity getUser() {
         return userThreadLocal.get();
     }

@@ -1,9 +1,8 @@
 package com.fpo.model;
 
-import java.io.Serializable;
+import java.util.Date;
 
-public class Template implements Serializable{
-    private static final long serialVersionUID = -3229858416443989062L;
+public class Template {
     private Long id;
 
     private String title;
@@ -13,6 +12,16 @@ public class Template implements Serializable{
     private Integer javaType;
 
     private Integer index;
+
+    private Integer required;
+
+    private Short status;
+
+    private Integer type;
+
+    private Date createDate;
+
+    private Date updateDate;
 
     public Long getId() {
         return id;
@@ -52,5 +61,45 @@ public class Template implements Serializable{
 
     public void setIndex(Integer index) {
         this.index = index;
+    }
+
+    public Integer getRequired() {
+        return required;
+    }
+
+    public void setRequired(Integer required) {
+        this.required = required;
+    }
+
+    public Short getStatus() {
+        return status;
+    }
+
+    public void setStatus(Short status) {
+        this.status = status;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 }

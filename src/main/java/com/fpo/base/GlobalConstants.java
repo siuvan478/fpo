@@ -9,6 +9,14 @@ import java.util.List;
 public class GlobalConstants {
 
     /**
+     * 是/否
+     */
+    public static class YesOrNo {
+        public static final Integer NO = 0;
+        public static final Integer YES = 1;
+    }
+
+    /**
      * 状态 0=删除 1=正常
      */
     public static class State {
@@ -110,6 +118,30 @@ public class GlobalConstants {
     }
 
     /**
+     * 模板枚举
+     */
+    public enum TemplateTypeEnum {
+        ORDER(1, "采购清单模板"),
+        QUOTE(2, "报价单模板");
+
+        public Integer type;
+        public String name;
+
+        TemplateTypeEnum(Integer type, String name) {
+            this.type = type;
+            this.name = name;
+        }
+
+        public Integer getType() {
+            return type;
+        }
+
+        public String getName() {
+            return name;
+        }
+    }
+
+    /**
      * Redis缓存键
      */
     public static class CacheKey {
@@ -127,6 +159,8 @@ public class GlobalConstants {
         public static final String PWD_ERROR_COUNT_KEY = "security:pwdErrorCount:";
         //excel模板列表
         public static final String EXCEL_TEMPLATE_LIST_KEY = "data:template";
+        //图片验证码
+        public static final String PICTURE_VERIFY_CODE_KEY = "security:verifyCode:picture:";
 
         public static final String LIST = "list";
         public static final String CITY_KEY = "data:city";

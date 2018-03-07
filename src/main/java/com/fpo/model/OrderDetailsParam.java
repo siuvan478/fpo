@@ -2,8 +2,9 @@ package com.fpo.model;
 
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
-public class OrderDetailsParam implements Serializable{
+public class OrderDetailsParam implements Serializable {
 
     private static final long serialVersionUID = -2599408419638710205L;
     private Long id;
@@ -25,6 +26,15 @@ public class OrderDetailsParam implements Serializable{
     private String unit;
 
     private String picture;
+
+    //采购明细ID
+    private Long orderDetailId;
+
+    //供应单价
+    private BigDecimal unitPrice;
+
+    //供应数量
+    private Integer supplyQuantity;
 
     public OrderDetailsParam() {
     }
@@ -93,6 +103,10 @@ public class OrderDetailsParam implements Serializable{
         this.quantity = quantity;
     }
 
+    public void setQuantity(String quantity) {
+        this.quantity = Integer.valueOf(quantity);
+    }
+
     public String getUnit() {
         return unit;
     }
@@ -101,11 +115,35 @@ public class OrderDetailsParam implements Serializable{
         this.unit = unit;
     }
 
+    public Long getOrderDetailId() {
+        return orderDetailId;
+    }
+
+    public void setOrderDetailId(Long orderDetailId) {
+        this.orderDetailId = orderDetailId;
+    }
+
     public String getPicture() {
         return picture;
     }
 
     public void setPicture(String picture) {
         this.picture = picture;
+    }
+
+    public BigDecimal getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(BigDecimal unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
+    public Integer getSupplyQuantity() {
+        return supplyQuantity;
+    }
+
+    public void setSupplyQuantity(Integer supplyQuantity) {
+        this.supplyQuantity = supplyQuantity;
     }
 }

@@ -192,6 +192,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>fpo</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

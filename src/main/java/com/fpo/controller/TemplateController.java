@@ -1,9 +1,9 @@
 package com.fpo.controller;
 
 
+import com.fpo.base.GlobalConstants;
 import com.fpo.base.ResultData;
-import com.fpo.model.OrderDetails;
-import com.fpo.service.OrderService;
+import com.fpo.model.OrderDetailsParam;
 import com.fpo.service.TemplateService;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.stereotype.Controller;
@@ -24,9 +24,6 @@ public class TemplateController {
     @Resource
     private TemplateService templateService;
 
-    @Resource
-    private OrderService orderService;
-
     /**
      * 下载采购单模板
      *
@@ -38,9 +35,10 @@ public class TemplateController {
             throws Exception {
         final HSSFWorkbook workbook = templateService.getExcelForPurchaseOrder();
         response.setContentType("application/octet-stream");
-        response.setHeader("Content-disposition", "attachment;filename=" + new String("采购清单模板".getBytes(), "iso-8859-1") + ".xls");//默认Excel名称
-        response.flushBuffer();
+        response.setHeader("Content-disposition", "attachment;filename=" +
+                new String(GlobalConstants.TemplateTypeEnum.ORDER.getName().getBytes(), "iso-8859-1") + ".xls");
         workbook.write(response.getOutputStream());
+        response.flushBuffer();
     }
 
     /**
@@ -55,9 +53,10 @@ public class TemplateController {
             throws Exception {
         final HSSFWorkbook workbook = templateService.getExcelForQuotation(headerId);
         response.setContentType("application/octet-stream");
-        response.setHeader("Content-disposition", "attachment;filename=" + new String("报价单模板".getBytes(), "iso-8859-1") + ".xls");//默认Excel名称
-        response.flushBuffer();
+        response.setHeader("Content-disposition", "attachment;filename=" +
+                new String(GlobalConstants.TemplateTypeEnum.QUOTE.getName().getBytes(), "iso-8859-1") + ".xls");
         workbook.write(response.getOutputStream());
+        response.flushBuffer();
     }
 
     @RequestMapping(value = "/front/index2", method = RequestMethod.GET)
@@ -67,8 +66,8 @@ public class TemplateController {
 
     @RequestMapping(value = "/front/upload", method = RequestMethod.POST)
     @ResponseBody
-    public ResultData<List<OrderDetails>> uploadData(@RequestParam(value = "filename") MultipartFile file)
+    public ResultData<List<OrderDetailsParam>> uploadData(@RequestParam(value = "filename") MultipartFile file)
             throws Exception {
-        return new ResultData<>(templateService.excelImport(file));
+        return new ResultData<>(templateService.uploadPurchaseOrder(file));
     }
 }

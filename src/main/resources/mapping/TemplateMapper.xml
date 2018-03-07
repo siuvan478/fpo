@@ -6,6 +6,12 @@
     <result column="title" property="title" jdbcType="VARCHAR" />
     <result column="filed" property="filed" jdbcType="VARCHAR" />
     <result column="java_type" property="javaType" jdbcType="TINYINT" />
+    <result column="index" property="index" jdbcType="INTEGER" />
+    <result column="required" property="required" jdbcType="TINYINT" />
+    <result column="status" property="status" jdbcType="SMALLINT" />
+    <result column="type" property="type" jdbcType="TINYINT" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
     delete from fpo_template
@@ -13,24 +19,34 @@
   </delete>
   <insert id="insert" parameterType="com.fpo.model.Template" >
     insert into fpo_template (id, title, filed, 
-      java_type)
+      java_type, index, required, 
+      status, type, create_date, 
+      update_date)
     values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{filed,jdbcType=VARCHAR}, 
-      #{javaType,jdbcType=TINYINT})
+      #{javaType,jdbcType=TINYINT}, #{index,jdbcType=INTEGER}, #{required,jdbcType=TINYINT}, 
+      #{status,jdbcType=SMALLINT}, #{type,jdbcType=TINYINT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{updateDate,jdbcType=TIMESTAMP})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.fpo.model.Template" >
     update fpo_template
     set title = #{title,jdbcType=VARCHAR},
       filed = #{filed,jdbcType=VARCHAR},
-      java_type = #{javaType,jdbcType=TINYINT}
+      java_type = #{javaType,jdbcType=TINYINT},
+      index = #{index,jdbcType=INTEGER},
+      required = #{required,jdbcType=TINYINT},
+      status = #{status,jdbcType=SMALLINT},
+      type = #{type,jdbcType=TINYINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
-    select id, title, filed, java_type
+    select id, title, filed, java_type, index, required, status, type, create_date, update_date
     from fpo_template
     where id = #{id,jdbcType=BIGINT}
   </select>
   <select id="selectAll" resultMap="BaseResultMap" >
-    select id, title, filed, java_type
-    from fpo_template
+    select id, title, filed, java_type, `index`, required, `status`, `type`, create_date, update_date
+    from fpo_template where status = 1 order by `index` asc
   </select>
 </mapper>
