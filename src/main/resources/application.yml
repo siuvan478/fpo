@@ -73,14 +73,14 @@ login.excludePaths: /favicon.ico, /login, /forgetPassword, /sendVerifyCode, /reg
 
 #短信配置
 smsConfig:
-  accessKeyId: LTAIqIX23oyjqhD1
-  accessKeySecret: tLOqqTjPnGa7TxHZczxjBL4Dd5x3iv
+  accessKeyId: LTAIqIX23oyjqhD0
+  accessKeySecret: tLOqqTjPnGa7TxHZczxjBL4Dd5x0iv
   signName: 人人采购
 
 #oss配置
 ossConfig:
-  accessKeyId: LTAIqIX23oyjqhD1
-  accessKeySecret: tLOqqTjPnGa7TxHZczxjBL4Dd5x3iv
+  accessKeyId: LTAIqIX23oyjqhD0
+  accessKeySecret: tLOqqTjPnGa7TxHZczxjBL4Dd5x0iv
   endpoint: oss-cn-shenzhen.aliyuncs.com
   publicBucket: ppcg-public2
   privateBucket: ppcg-private
