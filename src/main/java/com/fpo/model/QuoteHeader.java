@@ -1,8 +1,11 @@
 package com.fpo.model;
 
+import com.fpo.base.BasePo;
+
 import java.util.Date;
 
-public class QuoteHeader {
+public class QuoteHeader extends BasePo{
+    private static final long serialVersionUID = -8253424171571189553L;
     private Long id;
 
     private Long orderHeaderId;

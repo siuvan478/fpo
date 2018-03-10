@@ -134,9 +134,17 @@ public class FpoApplicationTests {
 
     @Resource
     private OSSConfig ossConfig;
+
     @Test
     public void testSts() throws Exception {
         ossConfig.sts("purchase/49ebefaf-3454-4709-b398-6353ed82b0bf.txt");
+    }
+
+    @Test
+    public void testPageQueryQuoteList() throws Exception {
+        QuoteHeader condition = new QuoteHeader();
+        PageInfo<QuoteParam> quoteParamPageInfo = quoteService.pageQueryQuote(1, 10, condition);
+        System.out.printf(JSONObject.toJSONString(quoteParamPageInfo));
     }
 
 }

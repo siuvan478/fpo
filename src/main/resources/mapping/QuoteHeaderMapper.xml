@@ -51,4 +51,30 @@
     user_id, create_date, update_date
     from fpo_quote_header
   </select>
+
+  <!--根据条件查询报价列表-->
+  <select id="queryByCondition" resultType="com.fpo.model.QuoteParam">
+    SELECT
+    a.id AS id, a.order_header_id AS orderHeaderId, a.remark AS remark, a.company_name AS companyName,
+    a.contact AS contact, a.contact_info AS contactInfo,
+    IF(a.update_date = NULL, a.create_date, a.update_date) AS quoteTime,
+    SUM(b.unit_price * b.quantity) AS totalPrice,
+    c.title AS orderTitle, c.company_name AS orderCompanyName,
+    c.contact AS orderContact, c.contact_info AS orderContactInfo
+    FROM fpo_quote_header AS a
+    LEFT JOIN fpo_quote_details AS b ON a.id = b.header_id
+    LEFT JOIN fpo_order_header AS c ON a.order_header_id = c.id
+    <where>
+        <if test="userId != null and userId != ''">
+            AND a.user_id = #{userId}
+        </if>
+        <if test="orderHeaderId != null and orderHeaderId != ''">
+            AND a.order_header_id = #{orderHeaderId}
+        </if>
+    </where>
+    <if test="orderBy != null and orderColumn != null">
+        ORDER BY #{orderBy} #{orderColumn}
+    </if>
+    GROUP BY a.id
+  </select>
 </mapper>

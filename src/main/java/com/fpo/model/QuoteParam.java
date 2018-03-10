@@ -2,7 +2,9 @@ package com.fpo.model;
 
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class QuoteParam implements Serializable {
@@ -21,6 +23,15 @@ public class QuoteParam implements Serializable {
     private String contact;
 
     private String contactInfo;
+
+    // for app
+    private BigDecimal totalPrice; //报价总价
+    private Date quoteTime; //报价时间
+    // for order information
+    private String orderTitle; //采购单名称
+    private String orderCompanyName; //采购单单位
+    private String orderContact; //联系人
+    private String orderContactInfo; //联系方式
 
     public QuoteParam() {
     }
@@ -80,4 +91,53 @@ public class QuoteParam implements Serializable {
     public void setContactInfo(String contactInfo) {
         this.contactInfo = contactInfo;
     }
+
+    public BigDecimal getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(BigDecimal totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public Date getQuoteTime() {
+        return quoteTime;
+    }
+
+    public void setQuoteTime(Date quoteTime) {
+        this.quoteTime = quoteTime;
+    }
+
+    public String getOrderTitle() {
+        return orderTitle;
+    }
+
+    public void setOrderTitle(String orderTitle) {
+        this.orderTitle = orderTitle;
+    }
+
+    public String getOrderCompanyName() {
+        return orderCompanyName;
+    }
+
+    public void setOrderCompanyName(String orderCompanyName) {
+        this.orderCompanyName = orderCompanyName;
+    }
+
+    public String getOrderContact() {
+        return orderContact;
+    }
+
+    public void setOrderContact(String orderContact) {
+        this.orderContact = orderContact;
+    }
+
+    public String getOrderContactInfo() {
+        return orderContactInfo;
+    }
+
+    public void setOrderContactInfo(String orderContactInfo) {
+        this.orderContactInfo = orderContactInfo;
+    }
+
 }

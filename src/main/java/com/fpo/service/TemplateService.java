@@ -279,9 +279,9 @@ public class TemplateService implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        redisUtils.delete(GlobalConstants.CacheKey.EXCEL_TEMPLATE_LIST_KEY);
-        List<Template> list = templateMapper.selectAll();
-        redisUtils.setList(GlobalConstants.CacheKey.EXCEL_TEMPLATE_LIST_KEY, list);
+//        redisUtils.delete(GlobalConstants.CacheKey.EXCEL_TEMPLATE_LIST_KEY);
+//        List<Template> list = templateMapper.selectAll();
+//        redisUtils.setList(GlobalConstants.CacheKey.EXCEL_TEMPLATE_LIST_KEY, list);
     }
 
     private Object getCellValue(Cell cell) throws BaseException {
