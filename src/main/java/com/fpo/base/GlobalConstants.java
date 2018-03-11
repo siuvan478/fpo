@@ -121,15 +121,28 @@ public class GlobalConstants {
      * 模板枚举
      */
     public enum TemplateTypeEnum {
-        ORDER(1, "采购清单模板"),
-        QUOTE(2, "报价单模板");
+        ORDER(1, "采购清单模板", "采购清单模板.ftl", "采购清单模板.xls"),
+        QUOTE(2, "报价单模板", "报价单模板.ftl", "报价单模板.xls");
 
         public Integer type;
         public String name;
+        public String templateName;
+        public String exportFileName;
 
-        TemplateTypeEnum(Integer type, String name) {
+        TemplateTypeEnum(Integer type, String name, String templateName, String exportFileName) {
             this.type = type;
             this.name = name;
+            this.templateName = templateName;
+            this.exportFileName = exportFileName;
+        }
+
+        public static TemplateTypeEnum getInstance(Integer type) {
+            List<TemplateTypeEnum> enumList = EnumUtils.getEnumList(TemplateTypeEnum.class);
+            for (TemplateTypeEnum e : enumList) {
+                if (e.getType().equals(type))
+                    return e;
+            }
+            return null;
         }
 
         public Integer getType() {
@@ -138,6 +151,14 @@ public class GlobalConstants {
 
         public String getName() {
             return name;
+        }
+
+        public String getTemplateName() {
+            return templateName;
+        }
+
+        public String getExportFileName() {
+            return exportFileName;
         }
     }
 

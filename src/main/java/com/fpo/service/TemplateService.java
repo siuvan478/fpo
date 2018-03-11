@@ -75,6 +75,25 @@ public class TemplateService implements InitializingBean {
         return result;
     }
 
+    public Map<String, Object> getFreeMarkerDataModel(Integer type, Long orderId) throws Exception {
+        Map<String, Object> dataModel = Maps.newHashMap();
+        List<Template> columns = this.selectListByType(type);
+        if (CollectionUtils.isNotEmpty(columns)) {
+            for (int i = 1; i <= columns.size(); i++) {
+                dataModel.put("column" + i, columns.get(i - 1).getTitle());
+            }
+            //报价单模板
+            if (type.equals(GlobalConstants.TemplateTypeEnum.QUOTE.getType())) {
+                //获取采购单信息
+                final OrderParam orderInfo = orderService.getOrderInfo(orderId);
+                dataModel.put("title", orderInfo.getTitle());
+                dataModel.put("orderDetails", orderInfo.getDetails());
+            }
+        }
+
+        return dataModel;
+    }
+
     /**
      * 获取采购单Excel
      *
@@ -279,9 +298,9 @@ public class TemplateService implements InitializingBean {
 
     @Override
     public void afterPropertiesSet() throws Exception {
-//        redisUtils.delete(GlobalConstants.CacheKey.EXCEL_TEMPLATE_LIST_KEY);
-//        List<Template> list = templateMapper.selectAll();
-//        redisUtils.setList(GlobalConstants.CacheKey.EXCEL_TEMPLATE_LIST_KEY, list);
+        redisUtils.delete(GlobalConstants.CacheKey.EXCEL_TEMPLATE_LIST_KEY);
+        List<Template> list = templateMapper.selectAll();
+        redisUtils.setList(GlobalConstants.CacheKey.EXCEL_TEMPLATE_LIST_KEY, list);
     }
 
     private Object getCellValue(Cell cell) throws BaseException {
