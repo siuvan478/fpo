@@ -7,6 +7,17 @@
         xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
         xmlns:html="http://www.w3.org/TR/REC-html40"
         xmlns:dt="uuid:C2F41010-65B3-11d1-A29F-00AA00C14882">
+    <DocumentProperties
+            xmlns="urn:schemas-microsoft-com:office:office">
+        <Author>Administrator</Author>
+        <LastAuthor>凡猪格格</LastAuthor>
+        <Created>2018-03-12T06:47:27Z</Created>
+        <LastSaved>2018-03-12T06:47:44Z</LastSaved>
+    </DocumentProperties>
+    <CustomDocumentProperties
+            xmlns="urn:schemas-microsoft-com:office:office">
+        <KSOProductBuildVer dt:dt="string">2052-10.1.0.7022</KSOProductBuildVer>
+    </CustomDocumentProperties>
     <ExcelWorkbook
             xmlns="urn:schemas-microsoft-com:office:excel">
         <WindowWidth>28695</WindowWidth>

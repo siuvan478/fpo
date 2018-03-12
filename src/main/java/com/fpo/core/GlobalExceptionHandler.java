@@ -22,7 +22,6 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = BaseException.class)
     public Object baseErrorHandler(HttpServletRequest req, Exception e) throws Exception {
-        e.printStackTrace();
         logger.error("---BaseException Handler---Host {} invokes url {} ERROR: {}", req.getRemoteHost(), req.getRequestURL(), e.getMessage());
         BaseException be = (BaseException) e;
         return new ResultData<>(null, be.getMessage(), be.getErrorCode());
@@ -30,14 +29,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = MissingServletRequestParameterException.class)
     public Object missServletRequestParameterErrorHandler(HttpServletRequest req, MissingServletRequestParameterException e) throws Exception {
-        e.printStackTrace();
         logger.error("---MissingServletRequestParameterException Handler---Host {} invokes url {} ERROR: {}", req.getRemoteHost(), req.getRequestURL(), e.getMessage());
         return new ResultData<>(null, e.getMessage(), HttpStateEnum.ERROR.getCode());
     }
 
     @ExceptionHandler(value = Exception.class)
     public Object defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
-        e.printStackTrace();
         logger.error("---DefaultException Handler---Host {} invokes url {} ERROR: {}", req.getRemoteHost(), req.getRequestURL(), e.getMessage());
         return new ResultData<>(null, "网络异常，请稍后再试", HttpStateEnum.ERROR.getCode());
     }

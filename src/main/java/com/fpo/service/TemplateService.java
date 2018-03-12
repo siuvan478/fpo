@@ -13,10 +13,12 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -75,6 +77,14 @@ public class TemplateService implements InitializingBean {
         return result;
     }
 
+    /**
+     * FreeMarker模板需要的参数
+     *
+     * @param type    模板类型
+     * @param orderId 采购单ID
+     * @return
+     * @throws Exception
+     */
     public Map<String, Object> getFreeMarkerDataModel(Integer type, Long orderId) throws Exception {
         Map<String, Object> dataModel = Maps.newHashMap();
         List<Template> columns = this.selectListByType(type);
@@ -92,113 +102,6 @@ public class TemplateService implements InitializingBean {
         }
 
         return dataModel;
-    }
-
-    /**
-     * 获取采购单Excel
-     *
-     * @return
-     * @throws Exception
-     */
-    public HSSFWorkbook getExcelForPurchaseOrder() throws Exception {
-        //获取表头列
-        final List<Template> columns = this.selectListByType(GlobalConstants.TemplateTypeEnum.ORDER.getType());
-        //初始化Excel工作簿
-        final HSSFWorkbook workbook = new HSSFWorkbook();
-        //创建一个sheet
-        final HSSFSheet sheet = workbook.createSheet("采购清单");
-        //新建font实体
-        final HSSFFont topFont = workbook.createFont();
-        topFont.setFontHeightInPoints((short) 14);
-        topFont.setFontName("宋体");
-        topFont.setBoldweight(Font.BOLDWEIGHT_BOLD);//粗体
-        //顶行样式
-        final HSSFCellStyle topCellStyle = workbook.createCellStyle();
-        topCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        topCellStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
-        topCellStyle.setAlignment(CellStyle.ALIGN_CENTER_SELECTION);
-        topCellStyle.setFont(topFont);
-        //创建第1行
-        final HSSFRow titleRow = sheet.createRow(0);
-        //生成表头
-        for (int i = 0; i < columns.size(); i++) {
-            HSSFCell cell = titleRow.createCell(i);
-            cell.setCellValue(columns.get(i).getTitle());
-            cell.setCellStyle(topCellStyle);
-            sheet.setColumnWidth(i, columns.get(i).getTitle().getBytes().length * 2 * 256);
-        }
-
-        return workbook;
-    }
-
-    /**
-     * 获取报价单Excel
-     *
-     * @param headerId
-     * @return
-     * @throws Exception
-     */
-    public HSSFWorkbook getExcelForQuotation(Long headerId) throws Exception {
-        //获取采购单信息
-        final OrderParam orderInfo = orderService.getOrderInfo(headerId);
-        //获取表头列
-        final List<Template> columns = this.selectListByType(GlobalConstants.TemplateTypeEnum.QUOTE.getType());
-        //初始化Excel工作簿
-        final HSSFWorkbook workbook = new HSSFWorkbook();
-        //创建一个sheet
-        final HSSFSheet sheet = workbook.createSheet("报价单");
-        //新建font实体
-        final HSSFFont topFont = workbook.createFont();
-        topFont.setFontHeightInPoints((short) 14);
-        topFont.setFontName("宋体");
-        topFont.setBoldweight(Font.BOLDWEIGHT_BOLD);//粗体
-        //顶行样式
-        final HSSFCellStyle topCellStyle = workbook.createCellStyle();
-        topCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-        topCellStyle.setFillForegroundColor(HSSFColor.GREY_25_PERCENT.index);
-        topCellStyle.setAlignment(CellStyle.ALIGN_CENTER_SELECTION);
-        topCellStyle.setFont(topFont);
-        //创建第1行
-        final HSSFRow topRow = sheet.createRow(0);
-        final HSSFCell topCell = topRow.createCell(0);
-        topCell.setCellValue(orderInfo.getTitle());
-        topCell.setCellStyle(topCellStyle);
-        //合并单元格
-        CellRangeAddress cra = new CellRangeAddress(0, 0, 0, columns.size() - 1); // 起始行, 终止行, 起始列, 终止列
-        sheet.addMergedRegion(cra);
-        //创建第2行
-        final HSSFRow titleRow = sheet.createRow(1);
-        //生成表头
-        for (int i = 0; i < columns.size(); i++) {
-            HSSFCell cell = titleRow.createCell(i);
-            cell.setCellValue(columns.get(i).getTitle());
-            cell.setCellStyle(topCellStyle);
-            sheet.setColumnWidth(i, columns.get(i).getTitle().getBytes().length * 2 * 256);
-        }
-        //生成表体
-        if (CollectionUtils.isNotEmpty(orderInfo.getDetails())) {
-            for (int i = 0; i < orderInfo.getDetails().size(); i++) {
-                HSSFRow detailRow = sheet.createRow(i + 2);
-                for (int j = 0; j < columns.size(); j++) {
-                    HSSFCell cell = detailRow.createCell(j);
-                    Object cellValue = Reflections.invokeGetter(orderInfo.getDetails().get(i), columns.get(j).getFiled());
-                    if (cellValue != null) {
-                        if (columns.get(j).getJavaType().equals(1)) {
-                            cell.setCellValue(cellValue.toString());
-                        } else if (columns.get(j).getJavaType().equals(2)) {
-                            if (cellValue instanceof Integer)
-                                cell.setCellValue((Integer) cellValue);
-                            else if (cellValue instanceof Long)
-                                cell.setCellValue((Long) cellValue);
-                        } else if (columns.get(j).getJavaType().equals(3)) {
-                            cell.setCellValue(DateUtil.getExcelDate((Date) cellValue));
-                        }
-                    }
-                }
-            }
-        }
-
-        return workbook;
     }
 
     public static final String TEMP_UPLOAD_FOLDER = "c:/usr/tmp/upload/";

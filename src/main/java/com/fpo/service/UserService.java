@@ -5,10 +5,7 @@ import com.fpo.base.BaseException;
 import com.fpo.base.GlobalConstants;
 import com.fpo.base.HttpStateEnum;
 import com.fpo.mapper.UserMapper;
-import com.fpo.model.User;
-import com.fpo.model.UserEntity;
-import com.fpo.model.UserParam;
-import com.fpo.model.UserProfile;
+import com.fpo.model.*;
 import com.fpo.utils.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -46,7 +43,7 @@ public class UserService {
     private RedisUtils redisUtils;
 
     @Resource
-    private SmsService smsService;
+    private SmsProducer smsProducer;
 
     /**
      * 用户注册
@@ -111,11 +108,6 @@ public class UserService {
         }
         //密码登录
         else if (GlobalConstants.LoginMode.PWD.equals(userParam.getLoginMode())) {
-//            //密码错误次数
-//            final Integer pwdErrorCount = redisUtils.getInt(GlobalConstants.CacheKey.PWD_ERROR_COUNT_KEY + userParam.getUsername());
-//            if (pwdErrorCount != null && pwdErrorCount >= MAX_PWD_ERROR_COUNT) {
-//                throw new BaseException("密码错误次数过多,账户已被锁定");
-//            }
             if (userInfo == null) throw new BaseException("用户名或密码错误");
             byte[] hashPassword = Digests.sha1(userParam.getPassword().getBytes(), Encodes.decodeHex(userInfo.getSalt()), HASH_INTERATIONS);
             if (!Encodes.encodeHex(hashPassword).equals(userInfo.getPassword())) {
@@ -161,7 +153,8 @@ public class UserService {
         redisUtils.setex(key, verifyCode, VERIFY_CODE_TIMEOUT);
         JSONObject o = new JSONObject();
         o.put("code", verifyCode);
-        smsService.sendSms(userParam.getUsername(), o, e.getTemplateCode(), null);
+        final MessageBean msgBean = new MessageBean(e.getTemplateCode(), o, userParam.getUsername());
+        smsProducer.send(JSONObject.toJSONString(msgBean));
     }
 
     /**
@@ -266,6 +259,18 @@ public class UserService {
             if (!StringUtils.equalsIgnoreCase(code, userParam.getVerifyCode())) {
                 throw new BaseException("验证码错误", HttpStateEnum.NEED_CODE.getCode());
             }
+        }
+    }
+
+    /**
+     * 用户登出
+     *
+     * @throws Exception
+     */
+    public void logout() throws Exception {
+        String token = LoginUtil.getHeader("x-token");
+        if (StringUtils.isBlank(token)) {
+            throw new BaseException("非法请求");
         }
     }
 

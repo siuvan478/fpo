@@ -6,14 +6,15 @@ import com.fpo.base.GlobalConstants;
 import com.fpo.base.ResultData;
 import com.fpo.model.OrderDetailsParam;
 import com.fpo.service.TemplateService;
-import com.google.common.collect.Maps;
 import freemarker.template.Template;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.MissingServletRequestParameterException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
@@ -57,41 +58,6 @@ public class TemplateController {
         response.setHeader("Content-disposition", "attachment;filename=" +
                 new String(e.getExportFileName().getBytes(), "iso-8859-1"));
         template.process(data, response.getWriter());
-    }
-
-    /**
-     * 下载采购单模板
-     *
-     * @param response
-     * @throws Exception
-     */
-    @RequestMapping(value = "/front/download", method = RequestMethod.GET)
-    public void downloadPurchaseTemplate(HttpServletResponse response)
-            throws Exception {
-        final HSSFWorkbook workbook = templateService.getExcelForPurchaseOrder();
-        response.setContentType("application/octet-stream");
-        response.setHeader("Content-disposition", "attachment;filename=" +
-                new String(GlobalConstants.TemplateTypeEnum.ORDER.getName().getBytes(), "iso-8859-1") + ".xls");
-        workbook.write(response.getOutputStream());
-        response.flushBuffer();
-    }
-
-    /**
-     * 下载报价单模板
-     *
-     * @param headerId 采购单ID
-     * @param response
-     * @throws Exception
-     */
-    @RequestMapping(value = "/front/download/{headerId}", method = RequestMethod.GET)
-    public void downloadQuoteTemplate(@PathVariable Long headerId, HttpServletResponse response)
-            throws Exception {
-        final HSSFWorkbook workbook = templateService.getExcelForQuotation(headerId);
-        response.setContentType("application/octet-stream");
-        response.setHeader("Content-disposition", "attachment;filename=" +
-                new String(GlobalConstants.TemplateTypeEnum.QUOTE.getName().getBytes(), "iso-8859-1") + ".xls");
-        workbook.write(response.getOutputStream());
-        response.flushBuffer();
     }
 
     @RequestMapping(value = "/front/index2", method = RequestMethod.GET)

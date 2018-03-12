@@ -1,5 +1,7 @@
 server:
   port: 8080
+  tomcat:
+    redirect-context-root:
 
 spring:
   datasource:
@@ -56,6 +58,10 @@ spring:
   thymeleaf:
     mode: HTML5
     cache: false
+  #RabbitMQ conifg
+  rabbitmq:
+    username: ppcg
+    password: ppcg2018
 
 mybatis:
   mapper-locations: classpath:mapping/*.xml
@@ -73,14 +79,14 @@ login.excludePaths: /favicon.ico, /login, /forgetPassword, /sendVerifyCode, /reg
 
 #短信配置
 smsConfig:
-  accessKeyId: LTAIqIX23oyjqhD0
-  accessKeySecret: tLOqqTjPnGa7TxHZczxjBL4Dd5x0iv
+  accessKeyId: LTAIqIX23oyjqhD1
+  accessKeySecret: tLOqqTjPnGa7TxHZczxjBL4Dd5x3iv
   signName: 人人采购
 
 #oss配置
 ossConfig:
-  accessKeyId: LTAIqIX23oyjqhD0
-  accessKeySecret: tLOqqTjPnGa7TxHZczxjBL4Dd5x0iv
+  accessKeyId: LTAIqIX23oyjqhD1
+  accessKeySecret: tLOqqTjPnGa7TxHZczxjBL4Dd5x3iv
   endpoint: oss-cn-shenzhen.aliyuncs.com
   publicBucket: ppcg-public2
   privateBucket: ppcg-private
@@ -98,3 +104,6 @@ dictConfig:
     0: 其他
     1: 收货后付款
     2: 预付款
+#日志配置
+logging:
+    file: /home/logs/log.log

@@ -48,7 +48,7 @@ public class SmsService {
         SendSmsRequest request = new SendSmsRequest();
         //必填:短信签名-可在短信控制台中找到
         request.setSignName(signName);
-        //必填:待发送手机号
+        //必填:待发送手机号,逗号分隔
         request.setPhoneNumbers(phoneNumbers);
         //必填:短信模板-可在短信控制台中找到
         request.setTemplateCode(templateCode);
@@ -66,12 +66,11 @@ public class SmsService {
             SendSmsResponse resp = acsClient.getAcsResponse(request);
             if (resp.getCode() != null && !resp.getCode().equals("OK")) {
                 LOGGER.error("短信发送失败, code={}, message={}", resp.getCode(), resp.getMessage());
-                throw new BaseException("resp.getMessage()");
+                throw new BaseException(resp.getMessage());
             } else {
                 LOGGER.info("短信发送成功, INFO={}", JsonMapper.nonEmptyMapper().toJson(resp));
             }
         } catch (ClientException e) {
-            e.printStackTrace();
             LOGGER.error("短信发送失败, phone={}, tempParam={}", phoneNumbers, tempParam == null ? null : tempParam.toJSONString());
         }
     }

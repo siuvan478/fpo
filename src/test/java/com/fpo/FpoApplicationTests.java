@@ -4,10 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.fpo.core.OSSConfig;
 import com.fpo.mapper.UserMapper;
 import com.fpo.model.*;
-import com.fpo.service.OrderService;
-import com.fpo.service.QuoteService;
-import com.fpo.service.SmsService;
-import com.fpo.service.UserService;
+import com.fpo.service.*;
 import com.fpo.utils.RedisUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -145,6 +142,14 @@ public class FpoApplicationTests {
         QuoteHeader condition = new QuoteHeader();
         PageInfo<QuoteParam> quoteParamPageInfo = quoteService.pageQueryQuote(1, 10, condition);
         System.out.printf(JSONObject.toJSONString(quoteParamPageInfo));
+    }
+
+    @Resource
+    private SmsProducer smsProducer;
+
+    @Test
+    public void testSmsQueue(){
+        smsProducer.send("nihao");
     }
 
 }
