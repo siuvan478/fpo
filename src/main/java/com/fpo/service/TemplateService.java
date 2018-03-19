@@ -15,6 +15,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -126,7 +127,8 @@ public class TemplateService implements InitializingBean {
         try {
             file.transferTo(tempFile);
             is = new FileInputStream(tempFile);
-            Workbook workbook = new HSSFWorkbook(is);
+            POIFSFileSystem fs = new POIFSFileSystem(is);
+            Workbook workbook = new HSSFWorkbook(fs);
             result = checkAndFetchExcelData(workbook, 1);
         } catch (BaseException e) {
             LOGGER.error(e.getMessage());
@@ -242,4 +244,5 @@ public class TemplateService implements InitializingBean {
         }
         return value;
     }
+
 }
