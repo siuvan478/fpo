@@ -11,7 +11,7 @@ public class QuoteDetailsParam implements Serializable {
 
     private BigDecimal unitPrice;
 
-    private Integer quantity;
+    private Integer supplyQuantity;
 
     public QuoteDetailsParam() {
     }
@@ -32,11 +32,11 @@ public class QuoteDetailsParam implements Serializable {
         this.unitPrice = unitPrice;
     }
 
-    public Integer getQuantity() {
-        return quantity;
+    public Integer getSupplyQuantity() {
+        return supplyQuantity;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
+    public void setSupplyQuantity(Integer supplyQuantity) {
+        this.supplyQuantity = supplyQuantity;
     }
 }

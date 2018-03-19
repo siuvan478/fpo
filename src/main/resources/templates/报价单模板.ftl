@@ -399,9 +399,15 @@
                 <Cell ss:StyleID="s52">
                     <Data ss:Type="String">${column10}</Data>
                 </Cell>
+                <Cell ss:StyleID="s52">
+                    <Data ss:Type="String">${column11}</Data>
+                </Cell>
             </Row>
         <#list orderDetails as orderDetail>
             <Row>
+                <Cell ss:StyleID="s53">
+                    <Data ss:Type="String">${orderDetail.orderDetailId!}</Data>
+                </Cell>
                 <Cell ss:StyleID="s53">
                     <Data ss:Type="String">${orderDetail.number!}</Data>
                 </Cell>
@@ -418,16 +424,16 @@
                     <Data ss:Type="String">${orderDetail.description!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s53">
-                    <Data ss:Type="String">${orderDetail.quantity!}</Data>
+                    <Data ss:Type="Number">${orderDetail.quantity!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s53">
                     <Data ss:Type="String">${orderDetail.unit!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s53">
-                    <Data ss:Type="String">0</Data>
+                    <Data ss:Type="Number">0</Data>
                 </Cell>
                 <Cell ss:StyleID="s53">
-                    <Data ss:Type="String">0</Data>
+                    <Data ss:Type="Number">0</Data>
                 </Cell>
                 <Cell ss:StyleID="s53" ss:Formula="=RC[-2]*RC[-1]">
                     <Data ss:Type="Error">#VALUE!</Data>

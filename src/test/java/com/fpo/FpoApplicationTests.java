@@ -105,11 +105,36 @@ public class FpoApplicationTests {
         p.setContact("Siuvan");
         p.setContactInfo("17620021827");
 
-        QuoteDetailsParam d = new QuoteDetailsParam();
-        d.setOrderDetailId(3L);
-        d.setQuantity(8000);
-        d.setUnitPrice(new BigDecimal(0.5));
-        p.getDetails().add(d);
+        QuoteDetailsParam d1 = new QuoteDetailsParam();
+        d1.setOrderDetailId(1L);
+        d1.setSupplyQuantity(1);
+        d1.setUnitPrice(new BigDecimal(0.5));
+        p.getDetails().add(d1);
+
+        QuoteDetailsParam d2 = new QuoteDetailsParam();
+        d2.setOrderDetailId(2L);
+        d2.setSupplyQuantity(2);
+        d2.setUnitPrice(new BigDecimal(0.5));
+        p.getDetails().add(d2);
+
+        QuoteDetailsParam d3 = new QuoteDetailsParam();
+        d3.setOrderDetailId(3L);
+        d3.setSupplyQuantity(3);
+        d3.setUnitPrice(new BigDecimal(0.5));
+        p.getDetails().add(d3);
+
+
+        QuoteDetailsParam d4 = new QuoteDetailsParam();
+        d4.setOrderDetailId(1L);
+        d4.setSupplyQuantity(4);
+        d4.setUnitPrice(new BigDecimal(0.5));
+        p.getDetails().add(d4);
+
+        QuoteDetailsParam d5 = new QuoteDetailsParam();
+        d5.setOrderDetailId(1L);
+        d5.setSupplyQuantity(5);
+        d5.setUnitPrice(new BigDecimal(0.5));
+        p.getDetails().add(d5);
 
         quoteService.addOrUpdate(p);
     }

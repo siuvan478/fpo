@@ -36,6 +36,9 @@ public class OrderDetailsParam implements Serializable {
     //供应数量
     private Integer supplyQuantity;
 
+    //小计
+    private BigDecimal subtotal;
+
     public OrderDetailsParam() {
     }
 
@@ -123,6 +126,10 @@ public class OrderDetailsParam implements Serializable {
         this.orderDetailId = orderDetailId;
     }
 
+    public void setOrderDetailId(String orderDetailId) {
+        this.orderDetailId = Long.valueOf(orderDetailId);
+    }
+
     public String getPicture() {
         return picture;
     }
@@ -139,11 +146,31 @@ public class OrderDetailsParam implements Serializable {
         this.unitPrice = unitPrice;
     }
 
+    public void setUnitPrice(String unitPrice) {
+        this.unitPrice = new BigDecimal(unitPrice);
+    }
+
     public Integer getSupplyQuantity() {
         return supplyQuantity;
     }
 
     public void setSupplyQuantity(Integer supplyQuantity) {
         this.supplyQuantity = supplyQuantity;
+    }
+
+    public void setSupplyQuantity(String supplyQuantity) {
+        this.supplyQuantity = Integer.valueOf(supplyQuantity);
+    }
+
+    public BigDecimal getSubtotal() {
+        return subtotal;
+    }
+
+    public void setSubtotal(BigDecimal subtotal) {
+        this.subtotal = subtotal;
+    }
+
+    public void setSubtotal(String subtotal) {
+        this.subtotal = new BigDecimal(subtotal);
     }
 }

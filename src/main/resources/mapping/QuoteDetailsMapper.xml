@@ -52,4 +52,12 @@
         select id, header_id, order_detail_id, unit_price, supply_quantity, status, create_date, update_date
         from fpo_quote_details where status = 1 and header_id = #{id}
     </select>
+    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true">
+        insert into fpo_order_details
+        (header_id, order_detail_id, unit_price, supply_quantity, status, create_date)
+        <foreach collection="list" item="obj" index="index" separator=",">
+            (  #{obj.headerId},#{obj.orderDetailId}, #{obj.unitPrice},
+            #{obj.supplyQuantity}, #{obj.status}, #{obj.createDate})
+        </foreach>
+    </insert>
 </mapper>

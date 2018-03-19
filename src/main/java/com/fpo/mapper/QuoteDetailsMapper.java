@@ -16,4 +16,6 @@ public interface QuoteDetailsMapper {
     int updateByPrimaryKey(QuoteDetails record);
 
     void deleteByHeaderId(Long id);
+
+    int batchInsert(List<QuoteDetails> list);
 }

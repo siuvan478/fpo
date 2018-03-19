@@ -45,7 +45,7 @@ import java.util.Map;
 @Service
 public class TemplateService implements InitializingBean {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
+    private final static Logger logger = LoggerFactory.getLogger("TemplateService");
 
     @Resource
     private TemplateMapper templateMapper;
@@ -56,12 +56,15 @@ public class TemplateService implements InitializingBean {
     @Resource
     private OrderService orderService;
 
+    //临时上传目录
     private static final String TEMP_UPLOAD_FOLDER = "c:/usr/tmp/upload/";
 
-    private static final Integer PURCHASE_TITLE_ROW_INDEX = 0;
-
-    private static final Integer QUOTE_TITLE_ROW_INDEX = 2;
-
+    /**
+     * 获取模板缓存数据
+     *
+     * @param type
+     * @return
+     */
     public List<Template> selectListByType(Integer type) {
         String str = redisUtils.getStr(GlobalConstants.CacheKey.EXCEL_TEMPLATE_LIST_KEY);
         List<Template> list = new ArrayList<>();
@@ -134,10 +137,10 @@ public class TemplateService implements InitializingBean {
             file.transferTo(tempFile);
             result = parseExcel(tempFile, GlobalConstants.TemplateTypeEnum.getInstance(fileType));
         } catch (BaseException e) {
-            LOGGER.error(e.getMessage());
+            logger.error(e.getMessage());
             throw e;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            logger.error(e.getMessage());
             throw new BaseException("数据解析失败");
         } finally {
             tempFile.deleteOnExit();
@@ -152,6 +155,14 @@ public class TemplateService implements InitializingBean {
         return result;
     }
 
+    /**
+     * 解析excel
+     *
+     * @param excelFile
+     * @param tEnum
+     * @return
+     * @throws BaseException
+     */
     private List<OrderDetailsParam> parseExcel(File excelFile, GlobalConstants.TemplateTypeEnum tEnum) throws BaseException {
         if (tEnum == null) throw new BaseException("fileType参数缺失或有误");
         final List<OrderDetailsParam> result = Lists.newArrayList();
@@ -206,100 +217,11 @@ public class TemplateService implements InitializingBean {
         return result;
     }
 
-    /**
-     * 校验excel数据
-     *
-     * @param workbook     文件
-     * @param templateType 模板类型
-     * @return
-     * @throws Exception
-     * @see com.fpo.base.GlobalConstants.TemplateTypeEnum
-     */
-    private List<OrderDetailsParam> checkAndFetchExcelData(Workbook workbook, Integer templateType) throws Exception {
-        if (workbook == null) throw new BaseException("上传文件不能为空");
-        Sheet sheet0 = workbook.getSheetAt(0);
-        Row headRow = sheet0.getRow(0);
-        final List<Template> template = this.selectListByType(templateType);
-        final Map<Integer, Template> maps = Maps.newHashMap();
-        for (int i = 0; i < headRow.getPhysicalNumberOfCells(); i++) {
-            String title = headRow.getCell(i).getStringCellValue();
-            boolean headValid = false;
-            for (Template t : template) {
-                if (title.equals(t.getTitle())) {
-                    headValid = true;
-                    maps.put(i, t);
-                }
-            }
-            if (!headValid) throw new BaseException("模板不合法，请重新下载模板");
-        }
-
-        final List<OrderDetailsParam> result = Lists.newArrayList();
-        for (int i = 1; i < sheet0.getPhysicalNumberOfRows(); i++) {
-            Row bodyRow = sheet0.getRow(i);
-            OrderDetailsParam obj = new OrderDetailsParam();
-            for (int j = 0; j < bodyRow.getPhysicalNumberOfCells(); j++) {
-                Template templateInfo = maps.get(j);
-                if (templateInfo != null) {
-                    Object cellValue = getCellValue(bodyRow.getCell(j));
-                    if (cellValue == null && GlobalConstants.YesOrNo.YES.equals(templateInfo.getRequired())) {
-                        throw new BaseException(MessageFormat.format("第{0}行第{1}列为必填项", (i + 1), (j + 1)));
-                    } else {
-                        try {
-                            Reflections.invokeSetter(obj, templateInfo.getFiled(), cellValue);
-                        } catch (Exception e) {
-                            throw new BaseException(MessageFormat.format("第{0}行第{1}列填入有误", (i + 1), (j + 1)));
-                        }
-                    }
-                }
-            }
-            result.add(obj);
-        }
-
-        return result;
-    }
-
     @Override
     public void afterPropertiesSet() throws Exception {
         redisUtils.delete(GlobalConstants.CacheKey.EXCEL_TEMPLATE_LIST_KEY);
         List<Template> list = templateMapper.selectAll();
         redisUtils.setList(GlobalConstants.CacheKey.EXCEL_TEMPLATE_LIST_KEY, list);
-    }
-
-    private Object getCellValue(Cell cell) throws BaseException {
-        Object value = null;
-        // 以下是判断数据的类型
-        switch (cell.getCellType()) {
-            case Cell.CELL_TYPE_NUMERIC:
-                value = cell.getNumericCellValue() + "";
-                if (HSSFDateUtil.isCellDateFormatted(cell)) {
-                    Date date = cell.getDateCellValue();
-                    if (date != null) {
-                        value = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
-                    } else {
-                        value = "";
-                    }
-                } else {
-                    value = new DecimalFormat("0").format(cell.getNumericCellValue());
-                }
-                break;
-            case Cell.CELL_TYPE_STRING: // 字符串
-                value = cell.getStringCellValue();
-                break;
-            case Cell.CELL_TYPE_BOOLEAN: // Boolean
-                value = cell.getBooleanCellValue() + "";
-                break;
-            case Cell.CELL_TYPE_FORMULA: // 公式
-                value = cell.getCellFormula() + "";
-                break;
-            case Cell.CELL_TYPE_BLANK: // 空值
-                break;
-            case Cell.CELL_TYPE_ERROR: // 故障
-                throw new BaseException("非法字符");
-            default:
-                //未知类型
-                break;
-        }
-        return value;
     }
 
 }

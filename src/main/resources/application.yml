@@ -7,7 +7,7 @@ spring:
   datasource:
           url: jdbc:mysql://127.0.0.1:3306/fpo?useUnicode=true&characterEncoding=utf-8&useSSL=false
           username: root
-          password:
+          password: 12345
           driver-class-name: com.mysql.jdbc.Driver
           platform: mysql
           type: com.alibaba.druid.pool.DruidDataSource
@@ -105,5 +105,7 @@ dictConfig:
     1: 收货后付款
     2: 预付款
 #日志配置
-logging:
-    file: /home/logs/log.log
+#logging:
+#    file: /home/logs/log.log
+#    pattern:
+#      level: ERROR

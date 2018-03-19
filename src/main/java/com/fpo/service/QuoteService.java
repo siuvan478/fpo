@@ -2,12 +2,10 @@ package com.fpo.service;
 
 import com.fpo.base.BaseException;
 import com.fpo.base.GlobalConstants;
+import com.fpo.mapper.QuoteDetailHistoriesMapper;
 import com.fpo.mapper.QuoteDetailsMapper;
 import com.fpo.mapper.QuoteHeaderMapper;
-import com.fpo.model.QuoteDetails;
-import com.fpo.model.QuoteDetailsParam;
-import com.fpo.model.QuoteHeader;
-import com.fpo.model.QuoteParam;
+import com.fpo.model.*;
 import com.fpo.utils.BeanMapper;
 import com.fpo.utils.LoginUtil;
 import com.github.pagehelper.PageHelper;
@@ -17,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,16 +28,20 @@ public class QuoteService {
     @Resource
     private QuoteDetailsMapper quoteDetailsMapper;
 
+    @Resource
+    private QuoteDetailHistoriesMapper quoteDetailHistoriesMapper;
+
     @Transactional
     public Long addOrUpdate(QuoteParam p) throws Exception {
         this.validateParam(p);
         Long result = null;
+        Date operateTime = new Date();
         //新增
         if (p.getId() == null) {
             final QuoteHeader header = BeanMapper.map(p, QuoteHeader.class);
             header.setStatus(GlobalConstants.State.NORMAL);
-            header.setCreateDate(new Date());
-            header.setUpdateDate(new Date());
+            header.setCreateDate(operateTime);
+            header.setUpdateDate(operateTime);
             header.setUserId(LoginUtil.getUserId());
             header.setUserId(6L);
             this.quoteHeaderMapper.insert(header);
@@ -51,23 +54,22 @@ public class QuoteService {
                 throw new BaseException("报价单不存在");
             }
             BeanMapper.copy(p, header);
-            header.setUpdateDate(new Date());
+            header.setUpdateDate(operateTime);
             this.quoteHeaderMapper.updateByPrimaryKey(header);
             this.quoteDetailsMapper.deleteByHeaderId(header.getId());
             result = header.getId();
         }
 
         if (CollectionUtils.isNotEmpty(p.getDetails())) {
+            List<QuoteDetails> detailsList = new ArrayList<>();
             for (QuoteDetailsParam d : p.getDetails()) {
-                final QuoteDetails details = BeanMapper.map(d, QuoteDetails.class);
-                details.setStatus(GlobalConstants.State.NORMAL);
-                details.setCreateDate(new Date());
-                details.setUpdateDate(new Date());
-                details.setHeaderId(result);
-                this.quoteDetailsMapper.insert(details);
+                final QuoteDetails details = new QuoteDetails(result, GlobalConstants.State.NORMAL, operateTime, operateTime);
+                BeanMapper.copy(d, details);
+                detailsList.add(details);
             }
+            quoteDetailsMapper.batchInsert(detailsList);
+            quoteDetailHistoriesMapper.batchInsert(BeanMapper.mapList(detailsList, QuoteDetailHistories.class));
         }
-
         return result;
     }
 
@@ -95,7 +97,7 @@ public class QuoteService {
                 if (d.getUnitPrice() == null || d.getUnitPrice().doubleValue() <= 0) {
                     throw new BaseException("单价填写有误");
                 }
-                if (d.getQuantity() == null || d.getQuantity() <= 0) {
+                if (d.getSupplyQuantity() == null || d.getSupplyQuantity() <= 0) {
                     throw new BaseException("数量填写有误");
                 }
             }

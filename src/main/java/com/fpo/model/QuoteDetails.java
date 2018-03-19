@@ -20,6 +20,13 @@ public class QuoteDetails {
 
     private Date updateDate;
 
+    public QuoteDetails(Long headerId, Integer status, Date createDate, Date updateDate) {
+        this.headerId = headerId;
+        this.status = status;
+        this.createDate = createDate;
+        this.updateDate = updateDate;
+    }
+
     public Long getId() {
         return id;
     }
