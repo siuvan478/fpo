@@ -1,16 +1,16 @@
 /*
 Navicat MySQL Data Transfer
 
-Source Server         : localhost
-Source Server Version : 50710
+Source Server         : fpo
+Source Server Version : 50623
 Source Host           : localhost:3306
 Source Database       : fpo
 
 Target Server Type    : MYSQL
-Target Server Version : 50710
+Target Server Version : 50623
 File Encoding         : 65001
 
-Date: 2018-03-19 10:22:38
+Date: 2018-03-20 00:50:52
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -30,7 +30,7 @@ CREATE TABLE `fpo_attachment` (
   `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态 1=正常 0=删除',
   `create_date` datetime NOT NULL COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='附件表';
 
 -- ----------------------------
 -- Records of fpo_attachment
@@ -55,16 +55,16 @@ CREATE TABLE `fpo_order_details` (
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COMMENT='采购单-明细';
 
 -- ----------------------------
 -- Records of fpo_order_details
 -- ----------------------------
-INSERT INTO `fpo_order_details` VALUES ('1', '4', null, '钢化膜', null, null, null, '9999', '张', null, '0', '2018-02-26 15:47:55', '2018-03-06 11:34:03');
-INSERT INTO `fpo_order_details` VALUES ('2', '4', null, '钢化膜1', null, null, null, '9999', '张', null, '0', '2018-02-26 16:03:59', '2018-03-06 11:34:03');
-INSERT INTO `fpo_order_details` VALUES ('3', '4', null, '钢化膜1', '4.7英寸', 'iPhoneX', null, '9999', '张', null, '0', '2018-02-26 16:05:45', '2018-03-06 11:34:03');
-INSERT INTO `fpo_order_details` VALUES ('4', '4', null, '钢化膜1', null, null, null, '9999', '张', null, '0', '2018-03-06 11:12:42', '2018-03-06 11:34:03');
-INSERT INTO `fpo_order_details` VALUES ('5', '4', null, '钢化膜1', null, null, null, '9999', '张', null, '1', '2018-03-06 11:34:03', '2018-03-06 11:34:03');
+INSERT INTO `fpo_order_details` VALUES ('1', '4', null, '钢化膜001', '5.4英寸', 'iPhoneX', null, '9999', '张', null, '1', '2018-02-26 15:47:55', '2018-03-06 11:34:03');
+INSERT INTO `fpo_order_details` VALUES ('2', '4', null, '钢化膜002', '4.7英寸', 'iPhoneX', null, '9999', '张', null, '1', '2018-02-26 16:03:59', '2018-03-06 11:34:03');
+INSERT INTO `fpo_order_details` VALUES ('3', '4', null, '钢化膜003', '4.7英寸', 'iPhoneX', null, '9999', '张', null, '1', '2018-02-26 16:05:45', '2018-03-06 11:34:03');
+INSERT INTO `fpo_order_details` VALUES ('4', '4', null, '钢化膜004', '4.7英寸', 'iPhoneX', null, '9999', '张', null, '1', '2018-03-06 11:12:42', '2018-03-06 11:34:03');
+INSERT INTO `fpo_order_details` VALUES ('5', '4', null, '钢化膜005', '4.7英寸', 'iPhoneX', null, '9999', '张', null, '1', '2018-03-06 11:34:03', '2018-03-06 11:34:03');
 
 -- ----------------------------
 -- Table structure for fpo_order_header
@@ -109,12 +109,31 @@ CREATE TABLE `fpo_quote_details` (
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='报价单-明细';
 
 -- ----------------------------
 -- Records of fpo_quote_details
 -- ----------------------------
 INSERT INTO `fpo_quote_details` VALUES ('1', '6', '3', '0.50', '8000', '1', '2018-02-27 15:44:23', '2018-02-27 15:44:23');
+
+-- ----------------------------
+-- Table structure for fpo_quote_detail_histories
+-- ----------------------------
+DROP TABLE IF EXISTS `fpo_quote_detail_histories`;
+CREATE TABLE `fpo_quote_detail_histories` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `header_id` bigint(20) NOT NULL COMMENT '报价单主表ID',
+  `order_detail_id` bigint(20) NOT NULL COMMENT '采购单从表ID',
+  `unit_price` decimal(20,2) NOT NULL COMMENT '单价',
+  `supply_quantity` int(11) NOT NULL COMMENT '供应数量',
+  `status` tinyint(4) NOT NULL DEFAULT '1' COMMENT '状态 1=正常 0=删除',
+  `create_date` datetime NOT NULL COMMENT '创建时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='报价单-调整记录表';
+
+-- ----------------------------
+-- Records of fpo_quote_detail_histories
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for fpo_quote_header
@@ -132,7 +151,7 @@ CREATE TABLE `fpo_quote_header` (
   `create_date` datetime NOT NULL COMMENT '创建时间',
   `update_date` datetime DEFAULT NULL COMMENT '修改时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COMMENT='报价单-主表';
 
 -- ----------------------------
 -- Records of fpo_quote_header
@@ -159,22 +178,22 @@ CREATE TABLE `fpo_template` (
   `create_date` datetime NOT NULL,
   `update_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COMMENT='文件模板';
 
 -- ----------------------------
 -- Records of fpo_template
 -- ----------------------------
-INSERT INTO `fpo_template` VALUES ('1', '编号', 'number', '1', '1', '0', '1', '1', '2018-02-27 09:55:23', null);
-INSERT INTO `fpo_template` VALUES ('2', '产品名称', 'name', '1', '2', '1', '1', '1', '2018-02-27 09:55:28', null);
-INSERT INTO `fpo_template` VALUES ('3', '规格', 'spec', '1', '3', '0', '1', '1', '2018-02-27 09:55:32', null);
-INSERT INTO `fpo_template` VALUES ('4', '品牌', 'brands', '1', '4', '0', '1', '1', '2018-02-27 09:55:35', null);
-INSERT INTO `fpo_template` VALUES ('5', '其他描述', 'description', '1', '5', '0', '1', '1', '2018-02-27 09:55:38', null);
-INSERT INTO `fpo_template` VALUES ('6', '数量 *', 'quantity', '2', '6', '1', '1', '1', '2018-02-27 09:55:42', null);
-INSERT INTO `fpo_template` VALUES ('7', '单位 *', 'unit', '1', '7', '1', '1', '1', '2018-02-27 09:55:46', null);
-INSERT INTO `fpo_template` VALUES ('9', '单价 *', 'unitPrice', '2', '8', '1', '1', '2', '2018-03-05 14:39:25', null);
-INSERT INTO `fpo_template` VALUES ('10', '数量 *', 'supplyQuantity', '2', '9', '1', '1', '2', '2018-03-05 14:39:44', null);
-INSERT INTO `fpo_template` VALUES ('11', 'ID *', 'orderDetailId', '2', '0', '1', '1', '2', '2018-03-05 15:46:41', null);
-INSERT INTO `fpo_template` VALUES ('12', '小计', 'subtotal', '2', '10', '0', '1', '2', '2018-03-12 14:16:01', null);
+INSERT INTO `fpo_template` VALUES ('1', '编号', 'number', '1', '2', '0', '1', '1', '2018-02-27 09:55:23', null);
+INSERT INTO `fpo_template` VALUES ('2', '产品名称', 'name', '1', '3', '1', '1', '1', '2018-02-27 09:55:28', null);
+INSERT INTO `fpo_template` VALUES ('3', '规格', 'spec', '1', '4', '0', '1', '1', '2018-02-27 09:55:32', null);
+INSERT INTO `fpo_template` VALUES ('4', '品牌', 'brands', '1', '5', '0', '1', '1', '2018-02-27 09:55:35', null);
+INSERT INTO `fpo_template` VALUES ('5', '其他描述', 'description', '1', '6', '0', '1', '1', '2018-02-27 09:55:38', null);
+INSERT INTO `fpo_template` VALUES ('6', '数量 *', 'quantity', '2', '7', '1', '1', '1', '2018-02-27 09:55:42', null);
+INSERT INTO `fpo_template` VALUES ('7', '单位 *', 'unit', '1', '8', '1', '1', '1', '2018-02-27 09:55:46', null);
+INSERT INTO `fpo_template` VALUES ('9', '单价 *', 'unitPrice', '2', '9', '1', '1', '2', '2018-03-05 14:39:25', null);
+INSERT INTO `fpo_template` VALUES ('10', '供应数量 *', 'supplyQuantity', '2', '10', '1', '1', '2', '2018-03-05 14:39:44', null);
+INSERT INTO `fpo_template` VALUES ('11', 'ID *', 'orderDetailId', '2', '1', '1', '1', '2', '2018-03-05 15:46:41', null);
+INSERT INTO `fpo_template` VALUES ('12', '小计', 'subtotal', '2', '11', '0', '1', '2', '2018-03-12 14:16:01', null);
 
 -- ----------------------------
 -- Table structure for fpo_user
@@ -190,7 +209,7 @@ CREATE TABLE `fpo_user` (
   `company` varchar(100) DEFAULT NULL COMMENT '公司名称',
   `position` varchar(100) DEFAULT NULL COMMENT '职位',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COMMENT='用户表';
 
 -- ----------------------------
 -- Records of fpo_user

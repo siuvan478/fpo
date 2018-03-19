@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fpo.mapper.QuoteDetailHistoriesMapper" >
+  <resultMap id="BaseResultMap" type="com.fpo.model.QuoteDetailHistories" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="header_id" property="headerId" jdbcType="BIGINT" />
+    <result column="order_detail_id" property="orderDetailId" jdbcType="BIGINT" />
+    <result column="unit_price" property="unitPrice" jdbcType="DECIMAL" />
+    <result column="supply_quantity" property="supplyQuantity" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="TINYINT" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from fpo_quote_detail_histories
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.fpo.model.QuoteDetailHistories" >
+    insert into fpo_quote_detail_histories (id, header_id, order_detail_id, 
+      unit_price, supply_quantity, status, 
+      create_date)
+    values (#{id,jdbcType=BIGINT}, #{headerId,jdbcType=BIGINT}, #{orderDetailId,jdbcType=BIGINT}, 
+      #{unitPrice,jdbcType=DECIMAL}, #{supplyQuantity,jdbcType=INTEGER}, #{status,jdbcType=TINYINT}, 
+      #{createDate,jdbcType=TIMESTAMP})
+  </insert>
+  <update id="updateByPrimaryKey" parameterType="com.fpo.model.QuoteDetailHistories" >
+    update fpo_quote_detail_histories
+    set header_id = #{headerId,jdbcType=BIGINT},
+      order_detail_id = #{orderDetailId,jdbcType=BIGINT},
+      unit_price = #{unitPrice,jdbcType=DECIMAL},
+      supply_quantity = #{supplyQuantity,jdbcType=INTEGER},
+      status = #{status,jdbcType=TINYINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select id, header_id, order_detail_id, unit_price, supply_quantity, status, create_date
+    from fpo_quote_detail_histories
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap" >
+    select id, header_id, order_detail_id, unit_price, supply_quantity, status, create_date
+    from fpo_quote_detail_histories
+  </select>
+  <insert id ="batchInsert" parameterType="java.util.List" >
+    insert into fpo_quote_detail_histories
+    (id, header_id, order_detail_id, unit_price, supply_quantity, status, create_date)
+    values
+    <foreach collection ="list" item="obj" index= "index" separator =",">
+      ( #{obj.id}, #{obj.headerId},#{obj.orderDetailId}, #{obj.unitPrice},
+      #{obj.supplyQuantity}, #{obj.status}, #{obj.createDate})
+    </foreach>
+  </insert >
+</mapper>
