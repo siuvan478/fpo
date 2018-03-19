@@ -65,10 +65,10 @@ public class TemplateController {
         return "index";
     }
 
-    @RequestMapping(value = "/front/upload", method = RequestMethod.POST)
+    @RequestMapping(value = "/front/import", method = RequestMethod.POST)
     @ResponseBody
-    public ResultData<List<OrderDetailsParam>> uploadData(@RequestParam(value = "filename") MultipartFile file)
+    public ResultData<List<OrderDetailsParam>> importData(@RequestParam(value = "filename") MultipartFile file, @RequestParam Integer fileType)
             throws Exception {
-        return new ResultData<>(templateService.uploadPurchaseOrder(file));
+        return new ResultData<>(templateService.importData(file, fileType));
     }
 }

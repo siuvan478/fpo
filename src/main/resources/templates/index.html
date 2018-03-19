@@ -7,10 +7,14 @@
 <body>
 <!--/*@thymesVar id="name" type="java.lang.String"*/-->
 
-<form class="form-horizontal" id="form_table" action="#" th:action="@{/front/upload}" enctype="multipart/form-data" method="post">
+<form class="form-horizontal" id="form_table" action="#" th:action="@{/front/import}" enctype="multipart/form-data" method="post">
     <input class="form-input" type="file" name="filename" />
+    <input class="form-input" type="text" name="fileType" />
     <br/>
     <button type="submit" class="btn">开始导入</button>
 </form>
+
+<a type="button" th:href="@{/front/template/download(type=1)}">下载模板1</a>
+<a type="button" th:href="@{/front/template/download(type=1,order=4)}">下载模板2</a>
 </body>
 </html>

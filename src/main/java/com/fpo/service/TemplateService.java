@@ -14,12 +14,14 @@ import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -29,7 +31,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.DecimalFormat;
@@ -54,6 +55,12 @@ public class TemplateService implements InitializingBean {
 
     @Resource
     private OrderService orderService;
+
+    private static final String TEMP_UPLOAD_FOLDER = "c:/usr/tmp/upload/";
+
+    private static final Integer PURCHASE_TITLE_ROW_INDEX = 0;
+
+    private static final Integer QUOTE_TITLE_ROW_INDEX = 2;
 
     public List<Template> selectListByType(Integer type) {
         String str = redisUtils.getStr(GlobalConstants.CacheKey.EXCEL_TEMPLATE_LIST_KEY);
@@ -105,7 +112,6 @@ public class TemplateService implements InitializingBean {
         return dataModel;
     }
 
-    public static final String TEMP_UPLOAD_FOLDER = "c:/usr/tmp/upload/";
 
     /**
      * 导入报价单
@@ -114,7 +120,7 @@ public class TemplateService implements InitializingBean {
      * @return
      * @throws Exception
      */
-    public List<OrderDetailsParam> uploadPurchaseOrder(MultipartFile file) throws Exception {
+    public List<OrderDetailsParam> importData(MultipartFile file, Integer fileType) throws BaseException {
         //新建一个临时目录
         File uploadDir = new File(TEMP_UPLOAD_FOLDER);
         if (!uploadDir.exists()) {
@@ -126,10 +132,7 @@ public class TemplateService implements InitializingBean {
         List<OrderDetailsParam> result = null;
         try {
             file.transferTo(tempFile);
-            is = new FileInputStream(tempFile);
-            POIFSFileSystem fs = new POIFSFileSystem(is);
-            Workbook workbook = new HSSFWorkbook(fs);
-            result = checkAndFetchExcelData(workbook, 1);
+            result = parseExcel(tempFile, GlobalConstants.TemplateTypeEnum.getInstance(fileType));
         } catch (BaseException e) {
             LOGGER.error(e.getMessage());
             throw e;
@@ -145,6 +148,60 @@ public class TemplateService implements InitializingBean {
                     is = null;
                 }
             }
+        }
+        return result;
+    }
+
+    private List<OrderDetailsParam> parseExcel(File excelFile, GlobalConstants.TemplateTypeEnum tEnum) throws BaseException {
+        if (tEnum == null) throw new BaseException("fileType参数缺失或有误");
+        final List<OrderDetailsParam> result = Lists.newArrayList();
+        final List<Template> template = this.selectListByType(tEnum.getType());
+        final Map<Integer, Template> maps = Maps.newHashMap();
+        try {
+            Document doc = new SAXReader().read(excelFile);
+            List allRow = ((Element) doc.getRootElement().elements("Worksheet").get(0)).element("Table").elements("Row");
+            //获取表头列
+            final Element titleRow = (Element) allRow.get(tEnum.getTitleIndex());
+            final List titleCells = titleRow.elements("Cell");
+            for (int i = 0; i < titleCells.size(); i++) {
+                String title = ((Element) titleCells.get(i)).element("Data").getText();
+                boolean headValid = false;
+                for (Template t : template) {
+                    if (title.equals(t.getTitle())) {
+                        headValid = true;
+                        maps.put(i, t);//下标放入Map
+                        break;
+                    }
+                }
+                if (!headValid) throw new BaseException("模板不合法，请重新下载模板");
+            }
+
+            for (int i = tEnum.getTitleIndex() + 1; i < allRow.size(); i++) {
+                final Element thisRow = (Element) allRow.get(i);
+                OrderDetailsParam obj = new OrderDetailsParam();
+                for (int j = 0; j < thisRow.elements("Cell").size(); j++) {
+                    final Element thisCell = (Element) thisRow.elements("Cell").get(j);
+                    Template templateInfo = maps.get(j);
+                    if (templateInfo != null) {
+                        String cellValue = thisCell.element("Data").getText();
+                        if (cellValue == null && GlobalConstants.YesOrNo.YES.equals(templateInfo.getRequired())) {
+                            throw new BaseException(MessageFormat.format("第{0}行第{1}列为必填项", (i + 1), (j + 1)));
+                        } else {
+                            try {
+                                String setterMethodName = Reflections.getSetterMethodName(templateInfo.getFiled());
+                                Reflections.invokeMethod(obj, setterMethodName, new Class[]{String.class}, new Object[]{cellValue});
+                            } catch (NumberFormatException e) {
+                                throw new BaseException(MessageFormat.format("第{0}行第{1}列填入有误", (i + 1), (j + 1)));
+                            }
+                        }
+                    }
+                }
+                result.add(obj);
+            }
+        } catch (DocumentException e) {
+            throw new BaseException("数据解析失败，请使用下载的模板导入数据");
+        } catch (NullPointerException e) {
+            //忽略空指针，无效数据行，直接忽略
         }
         return result;
     }
