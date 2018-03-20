@@ -2,6 +2,7 @@ package com.fpo;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fpo.core.OSSConfig;
+import com.fpo.mapper.QuoteDetailsMapper;
 import com.fpo.mapper.UserMapper;
 import com.fpo.model.*;
 import com.fpo.service.*;
@@ -104,10 +105,10 @@ public class FpoApplicationTests {
         QuoteParam p = new QuoteParam();
         p.setOrderHeaderId(orderId);
         p.setRemark("kahjfajklsfhajkldfas");
-        p.setCompanyName("first company");
+        p.setCompanyName("中国DDDDDDDDDD");
         p.setContact("Siuvan");
         p.setContactInfo("17620021827");
-        p.setId(21L);
+        p.setId(19L);
 
         List<OrderDetails> orderDetails = orderService.getOrderDetails(orderId);
 
@@ -145,11 +146,14 @@ public class FpoApplicationTests {
         ossConfig.sts("purchase/49ebefaf-3454-4709-b398-6353ed82b0bf.txt");
     }
 
+    @Resource
+    QuoteDetailsMapper quoteDetailsMapper;
     @Test
     public void testPageQueryQuoteList() throws Exception {
         QuoteHeader condition = new QuoteHeader();
         PageInfo<QuoteParam> quoteParamPageInfo = quoteService.pageQueryQuote(1, 10, condition);
         System.out.printf(JSONObject.toJSONString(quoteParamPageInfo, true));
+        System.out.println(quoteDetailsMapper.getMinPriceGroup(1L));
     }
 
     @Resource

@@ -27,6 +27,8 @@ public class QuoteParam implements Serializable {
     // for app
     private BigDecimal totalPrice; //报价总价
     private Date quoteTime; //报价时间
+    private Integer quoteCount;//报价次数
+    private Double percent; //幅度
     // for order information
     private String orderTitle; //采购单名称
     private String orderCompanyName; //采购单单位
@@ -106,6 +108,22 @@ public class QuoteParam implements Serializable {
 
     public void setQuoteTime(Date quoteTime) {
         this.quoteTime = quoteTime;
+    }
+
+    public Integer getQuoteCount() {
+        return quoteCount;
+    }
+
+    public void setQuoteCount(Integer quoteCount) {
+        this.quoteCount = quoteCount;
+    }
+
+    public Double getPercent() {
+        return percent;
+    }
+
+    public void setPercent(Double percent) {
+        this.percent = percent;
     }
 
     public String getOrderTitle() {

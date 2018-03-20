@@ -60,4 +60,12 @@
             #{obj.supplyQuantity}, #{obj.status}, #{obj.createDate})
         </foreach>
     </insert>
+
+    <!--获取最低报价组合-->
+    <select id="getMinPriceGroup" resultType="java.math.BigDecimal">
+        SELECT SUM(minPrice) FROM(
+          SELECT MIN(unit_price*supply_quantity) AS minPrice FROM fpo_quote_details d
+          WHERE d.status = 1 AND EXISTS(SELECT 1 FROM fpo_quote_header h WHERE h.order_header_id = #{orderId} AND h.id = d.header_id)
+          GROUP BY d.order_detail_id) tmp
+    </select>
 </mapper>

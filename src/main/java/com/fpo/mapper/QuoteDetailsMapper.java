@@ -2,6 +2,7 @@ package com.fpo.mapper;
 
 import com.fpo.model.QuoteDetails;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface QuoteDetailsMapper {
@@ -18,4 +19,6 @@ public interface QuoteDetailsMapper {
     void deleteByHeaderId(Long id);
 
     int batchInsert(List<QuoteDetails> list);
+
+    BigDecimal getMinPriceGroup(Long orderId);
 }

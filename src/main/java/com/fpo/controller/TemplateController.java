@@ -5,7 +5,13 @@ import com.fpo.base.BaseException;
 import com.fpo.base.GlobalConstants;
 import com.fpo.base.ResultData;
 import com.fpo.model.OrderDetailsParam;
+import com.fpo.model.OrderParam;
+import com.fpo.model.QuoteHeader;
+import com.fpo.model.QuoteParam;
+import com.fpo.service.OrderService;
+import com.fpo.service.QuoteService;
 import com.fpo.service.TemplateService;
+import com.github.pagehelper.PageInfo;
 import freemarker.template.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +42,12 @@ public class TemplateController {
     private TemplateService templateService;
 
     @Resource
+    private OrderService orderService;
+
+    @Resource
+    private QuoteService quoteService;
+
+    @Resource
     private FreeMarkerConfigurer freeMarkerConfigurer;
 
     @RequestMapping(value = "/front/template/download", method = RequestMethod.GET)
@@ -50,8 +62,25 @@ public class TemplateController {
         if (type.equals(GlobalConstants.TemplateTypeEnum.QUOTE.getType()) && orderId == null) {
             throw new MissingServletRequestParameterException("number", "orderId");
         }
+        if (type.equals(GlobalConstants.TemplateTypeEnum.QUOTE_SUMMARY.getType()) && orderId == null) {
+            throw new MissingServletRequestParameterException("number", "orderId");
+        }
         //获取FreeMarker参数
-        final Map<String, Object> data = templateService.getFreeMarkerDataModel(type, orderId);
+        final Map<String, Object> data = templateService.getFreeMarkerDataModel(type);
+        //报价单模板
+        if (GlobalConstants.TemplateTypeEnum.QUOTE.getType().equals(type)) {
+            //获取采购单信息
+            final OrderParam orderInfo = orderService.getOrderInfo(orderId);
+            data.put("title", orderInfo.getTitle());
+            data.put("orderDetails", orderInfo.getDetails());
+        } else if (GlobalConstants.TemplateTypeEnum.QUOTE_SUMMARY.getType().equals(type)) {
+            data.put("minPriceGroup", quoteService.getMinPriceGroup(orderId));
+            QuoteHeader condition = new QuoteHeader();
+            condition.setOrderHeaderId(orderId);
+            PageInfo<QuoteParam> pageInfo = quoteService.pageQueryQuote(null, null, condition);
+            data.put("quoteDetails", pageInfo.getList());
+            data.put("title","jkdsahfasd");
+        }
         Template template = freeMarkerConfigurer.getConfiguration().getTemplate(e.getTemplateName());
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/octet-stream");

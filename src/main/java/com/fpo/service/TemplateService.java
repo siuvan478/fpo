@@ -5,7 +5,6 @@ import com.fpo.base.BaseException;
 import com.fpo.base.GlobalConstants;
 import com.fpo.mapper.TemplateMapper;
 import com.fpo.model.OrderDetailsParam;
-import com.fpo.model.OrderParam;
 import com.fpo.model.Template;
 import com.fpo.utils.RedisUtils;
 import com.fpo.utils.Reflections;
@@ -13,11 +12,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -33,16 +27,15 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.DecimalFormat;
 import java.text.MessageFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
-@Service
+@Service("templateService")
 public class TemplateService implements InitializingBean {
 
     private final static Logger logger = LoggerFactory.getLogger("TemplateService");
@@ -52,9 +45,6 @@ public class TemplateService implements InitializingBean {
 
     @Autowired
     private RedisUtils redisUtils;
-
-    @Resource
-    private OrderService orderService;
 
     //临时上传目录
     private static final String TEMP_UPLOAD_FOLDER = "c:/usr/tmp/upload/";
@@ -75,43 +65,25 @@ public class TemplateService implements InitializingBean {
         } else {
             list.addAll(JSONObject.parseArray(str, Template.class));
         }
-        for (Template t : list) {
-            if (type.equals(GlobalConstants.TemplateTypeEnum.ORDER.getType())) {
-                if (t.getType().equals(GlobalConstants.TemplateTypeEnum.ORDER.getType())) {
-                    result.add(t);
-                }
-            } else if (type.equals(GlobalConstants.TemplateTypeEnum.QUOTE.getType())) {
-                result.add(t);
-            }
-        }
-
+        result.addAll(list.stream().filter(t -> t.getType().equals(type)).collect(Collectors.toList()));
         return result;
     }
 
     /**
      * FreeMarker模板需要的参数
      *
-     * @param type    模板类型
-     * @param orderId 采购单ID
+     * @param type 模板类型
      * @return
      * @throws Exception
      */
-    public Map<String, Object> getFreeMarkerDataModel(Integer type, Long orderId) throws Exception {
+    public Map<String, Object> getFreeMarkerDataModel(Integer type) throws Exception {
         Map<String, Object> dataModel = Maps.newHashMap();
         List<Template> columns = this.selectListByType(type);
         if (CollectionUtils.isNotEmpty(columns)) {
             for (int i = 1; i <= columns.size(); i++) {
                 dataModel.put("column" + i, columns.get(i - 1).getTitle());
             }
-            //报价单模板
-            if (type.equals(GlobalConstants.TemplateTypeEnum.QUOTE.getType())) {
-                //获取采购单信息
-                final OrderParam orderInfo = orderService.getOrderInfo(orderId);
-                dataModel.put("title", orderInfo.getTitle());
-                dataModel.put("orderDetails", orderInfo.getDetails());
-            }
         }
-
         return dataModel;
     }
 

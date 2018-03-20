@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -83,9 +84,21 @@ public class QuoteService {
      */
     public PageInfo<QuoteParam> pageQueryQuote(Integer pageNum, Integer pageSize, QuoteHeader condition) throws Exception {
         //开始分页
-        PageHelper.startPage(pageNum, pageSize);
+        if (pageNum != null && pageSize != null) {
+            PageHelper.startPage(pageNum, pageSize);
+        }
         List<QuoteParam> list = quoteHeaderMapper.queryByCondition(condition);
         return new PageInfo<>(list);
+    }
+
+    /**
+     * 获取最低报价组合
+     *
+     * @param orderId 报价单ID
+     * @return
+     */
+    public BigDecimal getMinPriceGroup(Long orderId) {
+        return quoteDetailsMapper.getMinPriceGroup(orderId);
     }
 
     private void validateParam(QuoteParam p) throws Exception {
