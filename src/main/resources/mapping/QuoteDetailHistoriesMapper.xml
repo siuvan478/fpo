@@ -50,4 +50,6 @@
       #{obj.supplyQuantity}, #{obj.status}, #{obj.createDate})
     </foreach>
   </insert >
+  
+  <select id=""
 </mapper>

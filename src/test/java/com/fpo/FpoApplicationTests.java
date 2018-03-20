@@ -8,6 +8,7 @@ import com.fpo.service.*;
 import com.fpo.utils.RedisUtils;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.apache.commons.lang3.RandomUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -98,43 +100,24 @@ public class FpoApplicationTests {
 
     @Test
     public void testQuoteAddOrUpdate() throws Exception {
+        Long orderId = 4L;
         QuoteParam p = new QuoteParam();
-        p.setOrderHeaderId(4L);
+        p.setOrderHeaderId(orderId);
         p.setRemark("kahjfajklsfhajkldfas");
         p.setCompanyName("first company");
         p.setContact("Siuvan");
         p.setContactInfo("17620021827");
+        p.setId(21L);
 
-        QuoteDetailsParam d1 = new QuoteDetailsParam();
-        d1.setOrderDetailId(1L);
-        d1.setSupplyQuantity(1);
-        d1.setUnitPrice(new BigDecimal(0.5));
-        p.getDetails().add(d1);
+        List<OrderDetails> orderDetails = orderService.getOrderDetails(orderId);
 
-        QuoteDetailsParam d2 = new QuoteDetailsParam();
-        d2.setOrderDetailId(2L);
-        d2.setSupplyQuantity(2);
-        d2.setUnitPrice(new BigDecimal(0.5));
-        p.getDetails().add(d2);
-
-        QuoteDetailsParam d3 = new QuoteDetailsParam();
-        d3.setOrderDetailId(3L);
-        d3.setSupplyQuantity(3);
-        d3.setUnitPrice(new BigDecimal(0.5));
-        p.getDetails().add(d3);
-
-
-        QuoteDetailsParam d4 = new QuoteDetailsParam();
-        d4.setOrderDetailId(1L);
-        d4.setSupplyQuantity(4);
-        d4.setUnitPrice(new BigDecimal(0.5));
-        p.getDetails().add(d4);
-
-        QuoteDetailsParam d5 = new QuoteDetailsParam();
-        d5.setOrderDetailId(1L);
-        d5.setSupplyQuantity(5);
-        d5.setUnitPrice(new BigDecimal(0.5));
-        p.getDetails().add(d5);
+        for (OrderDetails o : orderDetails) {
+            QuoteDetailsParam d1 = new QuoteDetailsParam();
+            d1.setOrderDetailId(o.getId());
+            d1.setSupplyQuantity(RandomUtils.nextInt(1, 99));
+            d1.setUnitPrice(new BigDecimal(RandomUtils.nextInt(100, 999)));
+            p.getDetails().add(d1);
+        }
 
         quoteService.addOrUpdate(p);
     }
@@ -166,14 +149,14 @@ public class FpoApplicationTests {
     public void testPageQueryQuoteList() throws Exception {
         QuoteHeader condition = new QuoteHeader();
         PageInfo<QuoteParam> quoteParamPageInfo = quoteService.pageQueryQuote(1, 10, condition);
-        System.out.printf(JSONObject.toJSONString(quoteParamPageInfo));
+        System.out.printf(JSONObject.toJSONString(quoteParamPageInfo, true));
     }
 
     @Resource
     private SmsProducer smsProducer;
 
     @Test
-    public void testSmsQueue(){
+    public void testSmsQueue() {
         smsProducer.send("nihao");
     }
 

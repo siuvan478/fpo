@@ -58,11 +58,11 @@
     a.id AS id, a.order_header_id AS orderHeaderId, a.remark AS remark, a.company_name AS companyName,
     a.contact AS contact, a.contact_info AS contactInfo,
     IF(a.update_date = NULL, a.create_date, a.update_date) AS quoteTime,
-    SUM(b.unit_price * b.quantity) AS totalPrice,
+    SUM(b.unit_price * b.supply_quantity) AS totalPrice,
     c.title AS orderTitle, c.company_name AS orderCompanyName,
     c.contact AS orderContact, c.contact_info AS orderContactInfo
     FROM fpo_quote_header AS a
-    LEFT JOIN fpo_quote_details AS b ON a.id = b.header_id
+    LEFT JOIN fpo_quote_details AS b ON a.id = b.header_id AND b.status = 1
     LEFT JOIN fpo_order_header AS c ON a.order_header_id = c.id
     <where>
         <if test="userId != null and userId != ''">
