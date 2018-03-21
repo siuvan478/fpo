@@ -105,10 +105,10 @@ public class FpoApplicationTests {
         QuoteParam p = new QuoteParam();
         p.setOrderHeaderId(orderId);
         p.setRemark("kahjfajklsfhajkldfas");
-        p.setCompanyName("中国DDDDDDDDDD");
+        p.setCompanyName("广州钜源泵业有限公司");
         p.setContact("Siuvan");
         p.setContactInfo("17620021827");
-        p.setId(19L);
+        // p.setId(19L);
 
         List<OrderDetails> orderDetails = orderService.getOrderDetails(orderId);
 
@@ -148,6 +148,7 @@ public class FpoApplicationTests {
 
     @Resource
     QuoteDetailsMapper quoteDetailsMapper;
+
     @Test
     public void testPageQueryQuoteList() throws Exception {
         QuoteHeader condition = new QuoteHeader();
@@ -162,6 +163,12 @@ public class FpoApplicationTests {
     @Test
     public void testSmsQueue() {
         smsProducer.send("nihao");
+    }
+
+    @Test
+    public void testaaa() {
+        List<QuoteParam> quoteInfoList = quoteService.getQuoteInfoList(4L);
+        System.out.println(JSONObject.toJSONString(quoteInfoList, true));
     }
 
 }

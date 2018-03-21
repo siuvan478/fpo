@@ -17,4 +17,6 @@ public interface QuoteHeaderMapper {
     int updateByPrimaryKey(QuoteHeader record);
 
     List<QuoteParam> queryByCondition(QuoteHeader condition);
+
+    List<QuoteParam> getQuoteInfoList(Long orderId);
 }

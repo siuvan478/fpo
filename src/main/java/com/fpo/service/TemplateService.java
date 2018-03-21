@@ -32,7 +32,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @Service("templateService")
@@ -65,7 +64,11 @@ public class TemplateService implements InitializingBean {
         } else {
             list.addAll(JSONObject.parseArray(str, Template.class));
         }
-        result.addAll(list.stream().filter(t -> t.getType().equals(type)).collect(Collectors.toList()));
+
+        for (Template t : list) {
+            if (t.getType().equals(type))
+                result.add(t);
+        }
         return result;
     }
 

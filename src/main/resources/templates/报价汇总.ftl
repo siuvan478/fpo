@@ -357,7 +357,7 @@
             </Row>
             <Row>
                 <Cell ss:StyleID="s59" ss:MergeAcross="6">
-                    <Data ss:Type="String">${title}</Data>
+                    <Data ss:Type="String">${reportInfo.title!}</Data>
                 </Cell>
             </Row>
             <Row>
@@ -383,28 +383,28 @@
                     <Data ss:Type="String">${column7}</Data>
                 </Cell>
             </Row>
-<#list quoteDetails as quoteDetail>
+<#list reportInfo.summaryList as report>
             <Row>
                 <Cell ss:StyleID="s54">
-                    <Data ss:Type="Number">${quoteDetail_index+1}</Data>
+                    <Data ss:Type="Number">${report_index+1}</Data>
                 </Cell>
                 <Cell ss:StyleID="s54">
-                    <Data ss:Type="String">${quoteDetail.companyName!}</Data>
+                    <Data ss:Type="String">${report.companyName!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s54">
-                    <Data ss:Type="Number">${quoteDetail.totalPrice?string(',###.00')}</Data>
+                    <Data ss:Type="Number">${report.totalPrice?string(',###.00')}</Data>
                 </Cell>
                 <Cell ss:StyleID="s54">
-                    <Data ss:Type="Number">${quoteDetail.quoteCount!}</Data>
+                    <Data ss:Type="Number">${report.quoteCount!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s55">
-                    <Data ss:Type="Number">${quoteDetail.percent!}</Data>
+                    <Data ss:Type="Number">${report.percent!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s54">
-                    <Data ss:Type="String">${quoteDetail.contact!}</Data>
+                    <Data ss:Type="String">${report.contact!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s54">
-                    <Data ss:Type="String">${quoteDetail.contactInfo!}</Data>
+                    <Data ss:Type="String">${report.contactInfo!}</Data>
                 </Cell>
             </Row>
 </#list>
@@ -414,7 +414,7 @@
                     <Data ss:Type="String">最低组合价</Data>
                 </Cell>
                 <Cell ss:StyleID="s56">
-                    <Data ss:Type="Number">${minPriceGroup}</Data>
+                    <Data ss:Type="Number">${reportInfo.minPriceGroup}</Data>
                 </Cell>
                 <Cell ss:StyleID="s54"/>
                 <Cell ss:StyleID="s54"/>

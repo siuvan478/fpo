@@ -136,6 +136,17 @@ public class OrderService {
         return orderDetailsMapper.selectByHeaderId(headerId);
     }
 
+    /**
+     * 获取采购单Header信息
+     *
+     * @param headerId
+     * @return
+     * @throws Exception
+     */
+    public OrderHeader getOrderHeader(Long headerId) throws Exception {
+        return orderHeaderMapper.selectByPrimaryKey(headerId);
+    }
+
 
     private void validateOrderInfo(OrderParam orderParam) throws Exception {
         if (StringUtils.isBlank(orderParam.getTitle())) throw new BaseException("采购单名称不能为空");

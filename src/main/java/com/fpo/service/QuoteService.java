@@ -101,6 +101,16 @@ public class QuoteService {
         return quoteDetailsMapper.getMinPriceGroup(orderId);
     }
 
+    /**
+     * 获取报价信息
+     *
+     * @param orderId
+     * @return
+     */
+    public List<QuoteParam> getQuoteInfoList(Long orderId) {
+        return quoteHeaderMapper.getQuoteInfoList(orderId);
+    }
+
     private void validateParam(QuoteParam p) throws Exception {
         if (CollectionUtils.isNotEmpty(p.getDetails())) {
             for (QuoteDetailsParam d : p.getDetails()) {

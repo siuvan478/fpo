@@ -158,4 +158,14 @@ public class QuoteParam implements Serializable {
         this.orderContactInfo = orderContactInfo;
     }
 
+    public BigDecimal getExcelTotalPrice() {
+        BigDecimal b = new BigDecimal(0);
+        if (this.getDetails() != null && this.getDetails().size() > 0) {
+            for (QuoteDetailsParam d : this.getDetails()) {
+                b = b.add(d.getUnitPrice().multiply(new BigDecimal(d.getSupplyQuantity())));
+            }
+        }
+        return b;
+    }
+
 }
