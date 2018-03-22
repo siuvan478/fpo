@@ -5,6 +5,9 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 报价汇总
+ */
 public class QuoteSummaryReport {
 
     private String title; //采购单名称

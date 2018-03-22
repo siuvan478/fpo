@@ -124,7 +124,8 @@ public class GlobalConstants {
         ORDER(1, "采购清单模板", "采购清单模板.ftl", "采购清单模板.xls", 0),
         QUOTE(2, "报价单模板", "报价单模板.ftl", "报价单模板.xls", 2),
         QUOTE_SUMMARY(3, "报价汇总", "报价汇总.ftl", "报价汇总.xls", 2),
-        SINGLE_ANALYSIS(4, "单项分析", "单项分析.ftl", "单项分析.xls", 2);
+        SINGLE_ANALYSIS(4, "单项分析", "单项分析.ftl", "单项分析.xls", 2),
+        QUOTE_STATISTIC(5, "报价统计", "报价统计.ftl", "报价统计.xls", 2);
 
         public Integer type;//模板类型
         public String name;//模板名称

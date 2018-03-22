@@ -4,6 +4,9 @@ package com.fpo.model;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 单项分析
+ */
 public class SingleAnalysisReport {
 
     private String title; //采购名称

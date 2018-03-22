@@ -7,7 +7,6 @@ import com.fpo.base.ResultData;
 import com.fpo.model.OrderDetailsParam;
 import com.fpo.model.OrderParam;
 import com.fpo.service.OrderService;
-import com.fpo.service.QuoteService;
 import com.fpo.service.ReportService;
 import com.fpo.service.TemplateService;
 import freemarker.template.Template;
@@ -43,9 +42,6 @@ public class TemplateController {
     private OrderService orderService;
 
     @Resource
-    private QuoteService quoteService;
-
-    @Resource
     private ReportService reportService;
 
     @Resource
@@ -60,10 +56,7 @@ public class TemplateController {
             LOGGER.error("模板下载失败, 找不到type = {} TemplateTypeEnum枚举实例", type);
             throw new BaseException("模板下载失败");
         }
-        if (type.equals(GlobalConstants.TemplateTypeEnum.QUOTE.getType()) && orderId == null) {
-            throw new MissingServletRequestParameterException("number", "orderId");
-        }
-        if (type.equals(GlobalConstants.TemplateTypeEnum.QUOTE_SUMMARY.getType()) && orderId == null) {
+        if (!type.equals(GlobalConstants.TemplateTypeEnum.ORDER.getType()) && orderId == null) {
             throw new MissingServletRequestParameterException("number", "orderId");
         }
         //获取FreeMarker参数
@@ -82,6 +75,10 @@ public class TemplateController {
         //单项分析
         else if (GlobalConstants.TemplateTypeEnum.SINGLE_ANALYSIS.getType().equals(type)) {
             data.put("reportInfo", reportService.getSingleAnalysisReport(orderId));
+        }
+        //报价统计
+        else if (GlobalConstants.TemplateTypeEnum.QUOTE_STATISTIC.getType().equals(type)) {
+            data.put("reportInfo", reportService.getQuoteStatisticReport(orderId));
         }
         Template template = freeMarkerConfigurer.getConfiguration().getTemplate(e.getTemplateName());
         response.setCharacterEncoding("UTF-8");

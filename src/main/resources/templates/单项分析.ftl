@@ -468,6 +468,17 @@
               <Font ss:FontName="宋体" x:CharSet="134" ss:Size="14" ss:Color="#000000" ss:Bold="1"/>
             <Interior ss:Color="#C0C0C0" ss:Pattern="Solid"/>
         </Style>
+        <Style ss:ID="s72">
+            <Alignment ss:Horizontal="Left"/>
+            <Borders>
+             <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="1"/>
+            <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="1"/>
+            <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="1"/>
+            <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="1"/>
+            </Borders>
+              <Font ss:FontName="宋体" x:CharSet="134" ss:Size="14" ss:Color="#0D0D0D"/>
+            <Interior ss:Color="#BFBFBF" ss:Pattern="Solid"/>
+        </Style>
     </Styles>
     <Worksheet ss:Name="单项分析">
         <Table ss:ExpandedColumnCount="256" ss:ExpandedRowCount="12" x:FullColumns="1" x:FullRows="1" ss:DefaultColumnWidth="54" ss:DefaultRowHeight="33">
@@ -475,12 +486,12 @@
             <Column ss:Index="2" ss:StyleID="Default" ss:AutoFitWidth="0" ss:Width="147"/>
             <Column ss:StyleID="Default" ss:AutoFitWidth="0" ss:Width="72.75" ss:Span="253"/>
             <Row>
-                <Cell ss:StyleID="s61" ss:MergeAcross="18">
+                <Cell ss:StyleID="s61" ss:MergeAcross="${reportInfo.quoteDetails?size*3+3}">
                     <Data ss:Type="String">汇总分析</Data>
                 </Cell>
             </Row>
             <Row>
-                <Cell ss:StyleID="s62" ss:MergeAcross="18">
+                <Cell ss:StyleID="s62" ss:MergeAcross="${reportInfo.quoteDetails?size*3+3}">
                     <Data ss:Type="String">[${reportInfo.title!}]</Data>
                 </Cell>
             </Row>
@@ -506,16 +517,16 @@
             <Row>
 <#assign num = reportInfo.quoteDetails?size />
 <#list 1..num as n><#--遍历采购明细--><#--遍历 单价-数量-小计--->
-    <#if n == 1>
-        <Cell ss:Index="5" ss:StyleID="s55">
-            <Data ss:Type="String">单价</Data>
-        </Cell>
-    </#if>
-    <#if n != 1>
-        <Cell ss:StyleID="s55">
-            <Data ss:Type="String">单价</Data>
-        </Cell>
-    </#if>
+            <#if n == 1>
+                <Cell ss:Index="5" ss:StyleID="s55">
+                    <Data ss:Type="String">单价</Data>
+                </Cell>
+            </#if>
+            <#if n != 1>
+                <Cell ss:StyleID="s55">
+                    <Data ss:Type="String">单价</Data>
+                </Cell>
+            </#if>
                 <Cell ss:StyleID="s55">
                     <Data ss:Type="String">数量</Data>
                 </Cell>
@@ -570,6 +581,17 @@
                 </Cell>
                 <Cell ss:StyleID="s60">
                     <Data ss:Type="Number">${quoteDetail.excelTotalPrice!}</Data>
+                </Cell>
+</#list>
+            </Row>
+            <Row>
+                <Cell ss:StyleID="s57"/>
+                <Cell ss:StyleID="s57"/>
+                <Cell ss:StyleID="s57"/>
+                <Cell ss:StyleID="s57"/>
+<#list reportInfo.quoteDetails as quoteDetail> <#--遍历 报价明细--->
+                <Cell ss:StyleID="s72" ss:MergeAcross="2">
+                    <Data ss:Type="String">报价说明：${quoteDetail.remark}</Data>
                 </Cell>
 </#list>
             </Row>

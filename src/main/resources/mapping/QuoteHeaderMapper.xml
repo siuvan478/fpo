@@ -61,12 +61,14 @@
     SUM(b.unit_price * b.supply_quantity) AS totalPrice,
     c.title AS orderTitle, c.company_name AS orderCompanyName,
     c.contact AS orderContact, c.contact_info AS orderContactInfo,
-    (e.firstQuoteTotalPrice-SUM(b.unit_price * b.supply_quantity))/e.firstQuoteTotalPrice AS `percent`, e.quoteCount
+    (e.firstQuoteTotalPrice-SUM(b.unit_price * b.supply_quantity))/e.firstQuoteTotalPrice AS `percent`,
+    e.quoteCount, e.allQuotePriceStr
     FROM fpo_quote_header AS a
     LEFT JOIN fpo_quote_details AS b ON a.id = b.header_id AND b.status = 1
     LEFT JOIN fpo_order_header AS c ON a.order_header_id = c.id
     LEFT JOIN (
-      SELECT COUNT(1) AS quoteCount, firstQuoteTotalPrice, header_id
+      SELECT COUNT(1) AS quoteCount, firstQuoteTotalPrice, header_id,
+      GROUP_CONCAT(firstQuoteTotalPrice ORDER BY create_date asc) as allQuotePriceStr
       FROM(
         SELECT header_id, create_date, SUM(supply_quantity * unit_price) as firstQuoteTotalPrice
         FROM fpo_quote_detail_histories GROUP BY header_id, create_date ORDER BY create_date ASC

@@ -63,4 +63,26 @@ public class ReportService {
         }
         return report;
     }
+
+    /**
+     * 获取报价统计报表
+     *
+     * @param orderId 采购单ID
+     * @return
+     * @throws Exception
+     */
+    public QuoteStatisticReport getQuoteStatisticReport(Long orderId) throws Exception {
+        final QuoteStatisticReport report = new QuoteStatisticReport();
+        OrderHeader orderHeader = orderService.getOrderHeader(orderId);
+        if (orderHeader != null) {
+            report.setTitle(orderHeader.getTitle());
+            QuoteHeader condition = new QuoteHeader();
+            condition.setOrderHeaderId(orderId);
+            List<QuoteParam> list = quoteHeaderMapper.queryByCondition(condition);
+            if (CollectionUtils.isNotEmpty(list)) {
+                report.getStatisticList().addAll(list);
+            }
+        }
+        return report.calculateColumnName();
+    }
 }
