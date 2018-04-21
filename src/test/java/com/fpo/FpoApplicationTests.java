@@ -63,20 +63,6 @@ public class FpoApplicationTests {
     }
 
     @Test
-    public void testSendVerifyCode() throws Exception {
-        UserParam u = new UserParam();
-        u.setVerifyCodeType(1);
-        u.setUsername("17620021827");
-        userService.sendVerifyCode(u);
-        u.setVerifyCodeType(2);
-        u.setUsername("17620021827");
-        userService.sendVerifyCode(u);
-        u.setVerifyCodeType(3);
-        u.setUsername("17620021827");
-        userService.sendVerifyCode(u);
-    }
-
-    @Test
     public void testOrderAddOrUpdate() throws Exception {
         OrderParam p = new OrderParam();
         p.setTitle("siuvan的采购单222");
@@ -123,20 +109,11 @@ public class FpoApplicationTests {
         quoteService.addOrUpdate(p);
     }
 
-    @Resource
-    private SmsService smsService;
-
-    @Test
-    public void testSmsSend() throws Exception {
-        smsService.sendSms("17620021827", null, "SMS_0000", null);
-    }
-
     @Test
     public void testDictConfig() throws Exception {
         OrderParam orderInfo = orderService.getOrderInfo(4L);
         System.out.println(JSONObject.toJSONString(orderInfo));
     }
-
 
     @Resource
     private OSSConfig ossConfig;
@@ -154,7 +131,6 @@ public class FpoApplicationTests {
         QuoteHeader condition = new QuoteHeader();
         PageInfo<QuoteParam> quoteParamPageInfo = quoteService.pageQueryQuote(1, 10, condition);
         System.out.printf(JSONObject.toJSONString(quoteParamPageInfo, true));
-        System.out.println(quoteDetailsMapper.getMinPriceGroup(1L));
     }
 
     @Resource
@@ -169,6 +145,26 @@ public class FpoApplicationTests {
     public void testaaa() {
         List<QuoteParam> quoteInfoList = quoteService.getQuoteInfoList(4L);
         System.out.println(JSONObject.toJSONString(quoteInfoList, true));
+    }
+
+    @Test
+    public void getOrderInfo() throws Exception {
+        OrderParam orderInfo = orderService.getOrderInfo(4L);
+        System.out.println(JSONObject.toJSONString(orderInfo, true));
+    }
+
+    @Autowired
+    private ReportService reportService;
+
+    @Test
+    public void getReportInfo() throws Exception {
+        Report reportInfo = reportService.getReportInfo(4L, 5);
+        System.out.println(JSONObject.toJSONString(reportInfo, true));
+    }
+
+    @Test
+    public void testPageQueryOrderInfo() {
+        System.out.println(JSONObject.toJSONString(orderService.pageQueryOrderInfo(1, 10, null), true));
     }
 
 }

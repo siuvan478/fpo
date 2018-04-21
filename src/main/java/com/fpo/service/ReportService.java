@@ -1,5 +1,6 @@
 package com.fpo.service;
 
+import com.fpo.base.GlobalConstants;
 import com.fpo.mapper.QuoteHeaderMapper;
 import com.fpo.model.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -21,68 +22,64 @@ public class ReportService {
     private QuoteHeaderMapper quoteHeaderMapper;
 
     /**
-     * 获取报价汇总报表
+     * 报表分析
      *
-     * @param orderId 采购单ID
+     * @param orderId    采购单ID
+     * @param reportType 报表类型
      * @return
      * @throws Exception
      */
-    public QuoteSummaryReport getQuoteSummaryReport(Long orderId) throws Exception {
-        final QuoteSummaryReport report = new QuoteSummaryReport();
-        OrderHeader orderHeader = orderService.getOrderHeader(orderId);
-        if (orderHeader != null) {
-            report.setTitle(orderHeader.getTitle());
-            report.setMinPriceGroup(quoteService.getMinPriceGroup(orderId));
-            QuoteHeader condition = new QuoteHeader();
-            condition.setOrderHeaderId(orderId);
-            List<QuoteParam> list = quoteHeaderMapper.queryByCondition(condition);
-            if (CollectionUtils.isNotEmpty(list)) {
-                report.getSummaryList().addAll(list);
+    public Report getReportInfo(Long orderId, Integer reportType) throws Exception {
+        //报价汇总
+        if (GlobalConstants.TemplateTypeEnum.QUOTE_SUMMARY.getType().equals(reportType)) {
+            final QuoteSummaryReport reportInfo = new QuoteSummaryReport();
+            OrderHeader orderHeader = orderService.getOrderHeader(orderId);
+            if (orderHeader != null) {
+                reportInfo.setTitle(orderHeader.getTitle());
+                reportInfo.setMinPriceGroup(quoteService.getMinPriceGroup(orderId));
+                QuoteHeader condition = new QuoteHeader();
+                condition.setOrderHeaderId(orderId);
+                List<QuoteParam> list = quoteHeaderMapper.queryByCondition(condition);
+                if (CollectionUtils.isNotEmpty(list)) {
+                    reportInfo.getSummaryList().addAll(list);
+                }
             }
+
+            return reportInfo;
         }
-        return report;
+        //单项分析
+        else if (GlobalConstants.TemplateTypeEnum.SINGLE_ANALYSIS.getType().equals(reportType)) {
+            final SingleAnalysisReport reportInfo = new SingleAnalysisReport();
+            OrderParam orderInfo = orderService.getOrderInfo(orderId);
+            if (orderInfo != null) {
+                reportInfo.setTitle(orderInfo.getTitle());
+                reportInfo.getOrderDetails().addAll(orderInfo.getDetails());
+            }
+            List<QuoteParam> quoteInfoList = quoteService.getQuoteInfoList(orderId);
+            if (CollectionUtils.isNotEmpty(quoteInfoList)) {
+                reportInfo.getQuoteDetails().addAll(quoteInfoList);
+            }
+
+            return reportInfo;
+        }
+        //报价统计
+        else if (GlobalConstants.TemplateTypeEnum.QUOTE_STATISTIC.getType().equals(reportType)) {
+            final QuoteStatisticReport reportInfo = new QuoteStatisticReport();
+            OrderHeader orderHeader = orderService.getOrderHeader(orderId);
+            if (orderHeader != null) {
+                reportInfo.setTitle(orderHeader.getTitle());
+                QuoteHeader condition = new QuoteHeader();
+                condition.setOrderHeaderId(orderId);
+                List<QuoteParam> list = quoteHeaderMapper.queryByCondition(condition);
+                if (CollectionUtils.isNotEmpty(list)) {
+                    reportInfo.getStatisticList().addAll(list);
+                }
+            }
+
+            return reportInfo.calculateColumnName();
+        }
+
+        return null;
     }
 
-    /**
-     * 获取单项分析报表
-     *
-     * @param orderId 采购单ID
-     * @return
-     * @throws Exception
-     */
-    public SingleAnalysisReport getSingleAnalysisReport(Long orderId) throws Exception {
-        final SingleAnalysisReport report = new SingleAnalysisReport();
-        OrderParam orderInfo = orderService.getOrderInfo(orderId);
-        if (orderInfo != null) {
-            report.setTitle(orderInfo.getTitle());
-            report.getOrderDetails().addAll(orderInfo.getDetails());
-        }
-        List<QuoteParam> quoteInfoList = quoteService.getQuoteInfoList(orderId);
-        if (CollectionUtils.isNotEmpty(quoteInfoList)) {
-            report.getQuoteDetails().addAll(quoteInfoList);
-        }
-        return report;
-    }
-
-    /**
-     * 获取报价统计报表
-     *
-     * @param orderId 采购单ID
-     * @return
-     * @throws Exception
-     */
-    public QuoteStatisticReport getQuoteStatisticReport(Long orderId) throws Exception {
-        final QuoteStatisticReport report = new QuoteStatisticReport();
-        OrderHeader orderHeader = orderService.getOrderHeader(orderId);
-        if (orderHeader != null) {
-            report.setTitle(orderHeader.getTitle());
-            QuoteHeader condition = new QuoteHeader();
-            condition.setOrderHeaderId(orderId);
-            List<QuoteParam> list = quoteHeaderMapper.queryByCondition(condition);
-            if (CollectionUtils.isNotEmpty(list)) {
-                report.getStatisticList().addAll(list);
-            }
-        }
-        return report.calculateColumnName();
-    }
 }

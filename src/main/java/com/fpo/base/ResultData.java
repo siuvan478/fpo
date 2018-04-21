@@ -7,6 +7,11 @@ public class ResultData<T> {
     private String message;
     private Integer code;
 
+    public ResultData() {
+        this.message = HttpStateEnum.OK.getDesc();
+        this.code = HttpStateEnum.OK.getCode();
+    }
+
     public ResultData(T data) {
         this.data = data;
         this.message = HttpStateEnum.OK.getDesc();

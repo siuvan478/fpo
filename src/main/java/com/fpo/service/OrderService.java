@@ -5,12 +5,12 @@ import com.fpo.base.GlobalConstants;
 import com.fpo.core.DictConfig;
 import com.fpo.mapper.OrderDetailsMapper;
 import com.fpo.mapper.OrderHeaderMapper;
-import com.fpo.model.OrderDetails;
-import com.fpo.model.OrderDetailsParam;
-import com.fpo.model.OrderHeader;
-import com.fpo.model.OrderParam;
+import com.fpo.model.*;
 import com.fpo.utils.BeanMapper;
 import com.fpo.utils.LoginUtil;
+import com.fpo.vo.OrderMgtVO;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -66,7 +66,7 @@ public class OrderService {
             header.setUpdateDate(new Date());
             orderHeaderMapper.updateByPrimaryKey(header);
             orderDetailsMapper.deleteByHeaderId(orderParam.getId());
-            if (CollectionUtils.isNotEmpty(orderParam.getDetails())) {
+            if (!CollectionUtils.isEmpty(orderParam.getDetails())) {
                 for (OrderDetailsParam d : orderParam.getDetails()) {
                     OrderDetails detail = BeanMapper.map(d, OrderDetails.class);
                     detail.setHeaderId(header.getId());
@@ -98,6 +98,28 @@ public class OrderService {
     }
 
     /**
+     * 删除采购单
+     *
+     * @param p 采购单ID
+     * @throws Exception
+     */
+    public void deleteOrder(OrderParam p) throws Exception {
+        if (p.getId() == null) {
+            throw new BaseException("参数异常");
+        }
+        OrderHeader orderHeader = orderHeaderMapper.selectByPrimaryKey(p.getId());
+        if (orderHeader == null || !orderHeader.getUserId().equals(LoginUtil.getUserId())) {
+            throw new BaseException("采购单不存在");
+        }
+        if (!orderHeader.getStatus().equals(GlobalConstants.State.STOP_QUOTE)) {
+            throw new BaseException("请先暂停报价");
+        }
+        orderHeader.setUpdateDate(new Date());
+        orderHeader.setStatus(GlobalConstants.State.DELETED);
+        orderHeaderMapper.updateByPrimaryKey(orderHeader);
+    }
+
+    /**
      * 预览采购单
      *
      * @param headerId
@@ -106,7 +128,7 @@ public class OrderService {
      */
     public OrderParam getOrderInfo(Long headerId) throws Exception {
         OrderHeader orderHeader = orderHeaderMapper.selectByPrimaryKey(headerId);
-        if (orderHeader == null) {
+        if (orderHeader == null || orderHeader.getStatus().equals(GlobalConstants.State.DELETED)) {
             throw new BaseException("采购单不存在");
         }
         OrderParam result = BeanMapper.map(orderHeader, OrderParam.class);
@@ -145,6 +167,23 @@ public class OrderService {
      */
     public OrderHeader getOrderHeader(Long headerId) throws Exception {
         return orderHeaderMapper.selectByPrimaryKey(headerId);
+    }
+
+    /**
+     * 采购管理列表
+     *
+     * @param pageNum    当前页数
+     * @param pageSize   每页显示数
+     * @param orderParam 条件
+     * @return
+     */
+    public PageInfo<OrderMgtVO> pageQueryOrderInfo(Integer pageNum, Integer pageSize, OrderParam orderParam) {
+        //开始分页
+        if (pageNum != null && pageSize != null) {
+            PageHelper.startPage(pageNum, pageSize);
+        }
+        List<OrderMgtVO> orderMgtVOs = this.orderHeaderMapper.findOrderMgtVOsByCondition(orderParam);
+        return new PageInfo<>(orderMgtVOs);
     }
 
 

@@ -7,23 +7,15 @@ import java.util.List;
 /**
  * 单项分析
  */
-public class SingleAnalysisReport {
+public class SingleAnalysisReport extends Report {
 
-    private String title; //采购名称
+    private static final long serialVersionUID = -7260657590217817494L;
 
     private List<OrderDetailsParam> orderDetails = new ArrayList<>(); //采购明细
 
     private List<QuoteParam> quoteDetails = new ArrayList<>(); //报价明细
 
     public SingleAnalysisReport() {
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public List<OrderDetailsParam> getOrderDetails() {

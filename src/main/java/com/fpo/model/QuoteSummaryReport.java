@@ -8,23 +8,15 @@ import java.util.List;
 /**
  * 报价汇总
  */
-public class QuoteSummaryReport {
+public class QuoteSummaryReport extends Report {
 
-    private String title; //采购单名称
+    private static final long serialVersionUID = 1912246093103754142L;
 
     private BigDecimal minPriceGroup; //最低价组合
 
     private List<QuoteParam> summaryList = new ArrayList<>(); //报价汇总列表
 
     public QuoteSummaryReport() {
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public BigDecimal getMinPriceGroup() {

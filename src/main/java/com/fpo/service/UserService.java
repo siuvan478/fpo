@@ -227,13 +227,9 @@ public class UserService {
      * @return
      * @throws Exception
      */
-    public String getPictureVerifyCode() throws Exception {
-        String token = LoginUtil.getHeader("x-token");
-        if (token == null) {
-            throw new BaseException("非法请求");
-        }
+    public String getPictureVerifyCode(String imageKey) throws Exception {
         String verifyCode = VerifyCodeUtils.generateVerifyCode(4);
-        String key = GlobalConstants.CacheKey.PICTURE_VERIFY_CODE_KEY + token;
+        String key = GlobalConstants.CacheKey.PICTURE_VERIFY_CODE_KEY + imageKey;
         redisUtils.setex(key, verifyCode, 60L);
         return verifyCode;
     }
@@ -245,20 +241,17 @@ public class UserService {
      * @throws Exception
      */
     public void validPictureVerifyCode(UserParam userParam) throws Exception {
-        Integer errCount = redisUtils.getInt(GlobalConstants.CacheKey.PWD_ERROR_COUNT_KEY + userParam.getUsername());
-        if (errCount != null && errCount >= MAX_PWD_ERROR_COUNT) {
-            if (StringUtils.isBlank(userParam.getVerifyCode())) {
-                throw new BaseException("请填写验证码", HttpStateEnum.NEED_CODE.getCode());
-            }
-            String key = GlobalConstants.CacheKey.PICTURE_VERIFY_CODE_KEY + LoginUtil.getHeader("x-token");
-            String code = redisUtils.getStr(key);
-            if (StringUtils.isBlank(code)) {
-                throw new BaseException("验证码已过期", HttpStateEnum.NEED_CODE.getCode());
-            }
-            //不区分大小写
-            if (!StringUtils.equalsIgnoreCase(code, userParam.getVerifyCode())) {
-                throw new BaseException("验证码错误", HttpStateEnum.NEED_CODE.getCode());
-            }
+        if (StringUtils.isBlank(userParam.getVerifyCode())) {
+            throw new BaseException("请填写验证码");
+        }
+        String key = GlobalConstants.CacheKey.PICTURE_VERIFY_CODE_KEY + LoginUtil.getHeader("image-key");
+        String code = redisUtils.getStr(key);
+        if (StringUtils.isBlank(code)) {
+            throw new BaseException("验证码已过期");
+        }
+        //不区分大小写
+        if (!StringUtils.equalsIgnoreCase(code, userParam.getVerifyCode())) {
+            throw new BaseException("验证码错误");
         }
     }
 

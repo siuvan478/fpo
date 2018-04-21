@@ -29,7 +29,7 @@ public class QuoteParam implements Serializable {
     private Date quoteTime; //报价时间
     private Integer quoteCount;//报价次数
     private Double percent; //幅度
-    private String allQuotePriceStr; //所有报价(,号分割)
+    private String allQuotePriceStr; //所有报价(#号分割)
     // for order information
     private String orderTitle; //采购单名称
     private String orderCompanyName; //采购单单位

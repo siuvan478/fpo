@@ -31,7 +31,7 @@ import java.util.Map;
  * Created by Siuvan Xia on 2018/2/25 0025.
  */
 @Controller("/")
-public class TemplateController {
+public class TemplateController{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
 
@@ -69,17 +69,12 @@ public class TemplateController {
             data.put("orderDetails", orderInfo.getDetails());
         }
         //报价汇总
-        else if (GlobalConstants.TemplateTypeEnum.QUOTE_SUMMARY.getType().equals(type)) {
-            data.put("reportInfo", reportService.getQuoteSummaryReport(orderId));
+        else if (GlobalConstants.TemplateTypeEnum.QUOTE_SUMMARY.getType().equals(type)
+                || GlobalConstants.TemplateTypeEnum.SINGLE_ANALYSIS.getType().equals(type)
+                || GlobalConstants.TemplateTypeEnum.QUOTE_STATISTIC.getType().equals(type)) {
+            data.put("reportInfo", reportService.getReportInfo(orderId, type));
         }
-        //单项分析
-        else if (GlobalConstants.TemplateTypeEnum.SINGLE_ANALYSIS.getType().equals(type)) {
-            data.put("reportInfo", reportService.getSingleAnalysisReport(orderId));
-        }
-        //报价统计
-        else if (GlobalConstants.TemplateTypeEnum.QUOTE_STATISTIC.getType().equals(type)) {
-            data.put("reportInfo", reportService.getQuoteStatisticReport(orderId));
-        }
+
         Template template = freeMarkerConfigurer.getConfiguration().getTemplate(e.getTemplateName());
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/octet-stream");

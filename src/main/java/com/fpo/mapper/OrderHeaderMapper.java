@@ -1,6 +1,9 @@
 package com.fpo.mapper;
 
 import com.fpo.model.OrderHeader;
+import com.fpo.model.OrderParam;
+import com.fpo.vo.OrderMgtVO;
+
 import java.util.List;
 
 public interface OrderHeaderMapper {
@@ -13,4 +16,6 @@ public interface OrderHeaderMapper {
     List<OrderHeader> selectAll();
 
     int updateByPrimaryKey(OrderHeader record);
+
+    List<OrderMgtVO> findOrderMgtVOsByCondition(OrderParam orderParam);
 }

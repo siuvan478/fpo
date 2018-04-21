@@ -69,4 +69,46 @@
     update_date
     from fpo_order_header
   </select>
+
+    <select id="findOrderMgtVOsByCondition" parameterType="com.fpo.model.OrderParam" resultMap="OrderMgtVOResultMap">
+
+        select
+        a.id, a.title, a.status,
+        b.quoteId, b.company_name,
+        b.contact, b.contact_info, b.create_date, b.totalPrice
+        from fpo_order_header a,
+        (
+            select
+            a.id as quoteId,
+            a.order_header_id,
+            a.company_name,
+            a.contact,
+            a.contact_info,
+            a.create_date,
+            sum(b.unit_price * b.supply_quantity) as totalPrice
+            from fpo_quote_header a left join fpo_quote_details b on a.id = b.header_id and b.status = 1
+            where a.status = 1 group by a.id
+        ) as b
+        where a.id = b.order_header_id and a.status != 0
+        <if test="userId != null">
+            and a.user_id = #{userId}
+        </if>
+        order by b.create_date desc
+    </select>
+
+
+    <resultMap id="OrderMgtVOResultMap" type="com.fpo.vo.OrderMgtVO">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="status" jdbcType="TINYINT" property="status"/>
+
+        <collection property="quoteList" column="id" ofType="com.fpo.vo.QuoteHeaderVO">
+            <result column="quoteId" property="quoteId" jdbcType="BIGINT" />
+            <result column="company_name" property="companyName" jdbcType="VARCHAR" />
+            <result column="contact" property="contact" jdbcType="VARCHAR" />
+            <result column="contact_info" property="contactInfo" jdbcType="VARCHAR" />
+            <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+            <result column="totalPrice" property="totalPrice" jdbcType="DECIMAL"/>
+        </collection>
+    </resultMap>
 </mapper>

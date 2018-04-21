@@ -115,9 +115,11 @@ public class UserController {
      */
     @RequestMapping(value = "/front/getVerifyCode", method = RequestMethod.GET)
     public void getPictureVerifyCode(HttpServletResponse response) throws Exception {
+        String imageKey = Identities.uuid2();
         response.setContentType("image/jpeg");
         response.setHeader("Content-Disposition", "attachment;filename=verifyCode.jpg");
-        VerifyCodeUtils.outputImage(200, 80, response.getOutputStream(), userService.getPictureVerifyCode());
+        response.setHeader("imageKey", imageKey);
+        VerifyCodeUtils.outputImage(200, 80, response.getOutputStream(), userService.getPictureVerifyCode(imageKey));
     }
 
     /**
@@ -126,7 +128,7 @@ public class UserController {
      * @param userParam
      * @return
      */
-    @RequestMapping(value = "/front/validVerifyCode", method = RequestMethod.POST, produces = {"application/json;charset=UTF-8"})
+    @RequestMapping(value = "/front/validVerifyCode", method = RequestMethod.GET)
     public ResultData<Boolean> validPictureVerifyCode(@RequestBody UserParam userParam) throws Exception {
         userService.validPictureVerifyCode(userParam);
         return new ResultData<>(true);

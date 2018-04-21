@@ -8,25 +8,17 @@ import java.util.List;
 /**
  * 报价统计
  */
-public class QuoteStatisticReport {
+public class QuoteStatisticReport extends Report {
+
+    private static final long serialVersionUID = 8181507163339987867L;
 
     private static final String[] CHINESE_NUMBER_ARRAY = new String[]{"一", "二", "三", "四", "五", "六", "七", "八", "九", "十"};
-
-    private String title; //采购单名称
 
     private List<String> dynaColumnName = new ArrayList<>();//动态列名
 
     private List<QuoteParam> statisticList = new ArrayList<>(); //报价汇总列表
 
     public QuoteStatisticReport() {
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public List<String> getDynaColumnName() {
