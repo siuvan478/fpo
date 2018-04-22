@@ -92,18 +92,21 @@ ossConfig:
   privateBucket: ppcg-private
 
 #数据词典
-dictConfig:
-  invoiceModeMap:
-    0: 不用发票
-    1: 增值税普票
-    2: 增值税专票
-  quoteModeMap:
-    1:  报价含税
-    2:  报价含运费
-  paymentModeMap:
-    0: 其他
-    1: 收货后付款
-    2: 预付款
+#dictConfig:
+#  invoiceModeMap:
+#     invoiceMode:
+#        0: 不用发票
+#        1: 增值税普票
+#        2: 增值税专票
+#  quoteModeMap:
+#     quoteMode:
+#        1:  报价含税
+#        2:  报价含运费
+#  paymentModeMap:
+#     paymentMode:
+#        0: 其他
+#        1: 收货后付款
+#        2: 预付款
 #日志配置
 #logging:
 #    file: /home/logs/log.log

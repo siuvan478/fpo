@@ -362,25 +362,25 @@
             </Row>
             <Row>
                 <Cell ss:StyleID="s53">
-                    <Data ss:Type="String">${column1}</Data>
+                    <Data ss:Type="String">排名</Data>
                 </Cell>
                 <Cell ss:StyleID="s53">
-                    <Data ss:Type="String">${column2}</Data>
+                    <Data ss:Type="String">公司名称</Data>
                 </Cell>
                 <Cell ss:StyleID="s53">
-                    <Data ss:Type="String">${column3}</Data>
+                    <Data ss:Type="String">总价</Data>
                 </Cell>
                 <Cell ss:StyleID="s53">
-                    <Data ss:Type="String">${column4}</Data>
+                    <Data ss:Type="String">报价次数</Data>
                 </Cell>
                 <Cell ss:StyleID="s53">
-                    <Data ss:Type="String">${column5}</Data>
+                    <Data ss:Type="String">降幅</Data>
                 </Cell>
                 <Cell ss:StyleID="s53">
-                    <Data ss:Type="String">${column6}</Data>
+                    <Data ss:Type="String">联系人</Data>
                 </Cell>
                 <Cell ss:StyleID="s53">
-                    <Data ss:Type="String">${column7}</Data>
+                    <Data ss:Type="String">联系电话</Data>
                 </Cell>
             </Row>
 <#list reportInfo.summaryList as report>

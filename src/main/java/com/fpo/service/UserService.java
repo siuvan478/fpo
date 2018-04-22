@@ -2,7 +2,7 @@ package com.fpo.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fpo.base.BaseException;
-import com.fpo.base.GlobalConstants;
+import com.fpo.constant.GlobalConstants;
 import com.fpo.base.HttpStateEnum;
 import com.fpo.mapper.UserMapper;
 import com.fpo.model.*;

@@ -359,7 +359,7 @@
             <Column ss:Index="10" ss:StyleID="s49" ss:AutoFitWidth="0" ss:Width="111.75"/>
             <Column ss:StyleID="s49" ss:AutoFitWidth="0" ss:Width="87" ss:Span="245"/>
             <Row>
-                <Cell ss:StyleID="s60" ss:MergeAcross="9">
+                <Cell ss:StyleID="s60" ss:MergeAcross=10">
                     <Data ss:Type="String">${title!}</Data>
                 </Cell>
             </Row>
@@ -370,37 +370,37 @@
             </Row>
             <Row>
                 <Cell ss:StyleID="s52">
-                    <Data ss:Type="String">${column1}</Data>
+                    <Data ss:Type="String">${column1!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s52">
-                    <Data ss:Type="String">${column2}</Data>
+                    <Data ss:Type="String">${column2!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s52">
-                    <Data ss:Type="String">${column3}</Data>
+                    <Data ss:Type="String">${column3!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s52">
-                    <Data ss:Type="String">${column4}</Data>
+                    <Data ss:Type="String">${column4!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s52">
-                    <Data ss:Type="String">${column5}</Data>
+                    <Data ss:Type="String">${column5!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s52">
-                    <Data ss:Type="String">${column6}</Data>
+                    <Data ss:Type="String">${column6!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s52">
-                    <Data ss:Type="String">${column7}</Data>
+                    <Data ss:Type="String">${column7!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s52">
-                    <Data ss:Type="String">${column8}</Data>
+                    <Data ss:Type="String">${column8!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s52">
-                    <Data ss:Type="String">${column9}</Data>
+                    <Data ss:Type="String">${column9!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s52">
-                    <Data ss:Type="String">${column10}</Data>
+                    <Data ss:Type="String">${column10!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s52">
-                    <Data ss:Type="String">${column11}</Data>
+                    <Data ss:Type="String">${column11!}</Data>
                 </Cell>
             </Row>
         <#list orderDetails as orderDetail>

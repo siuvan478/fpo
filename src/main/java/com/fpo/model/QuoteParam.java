@@ -96,7 +96,7 @@ public class QuoteParam implements Serializable {
     }
 
     public BigDecimal getTotalPrice() {
-        return totalPrice;
+        return totalPrice == null ? BigDecimal.ZERO : totalPrice;
     }
 
     public void setTotalPrice(BigDecimal totalPrice) {

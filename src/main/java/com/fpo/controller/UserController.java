@@ -8,6 +8,7 @@ import com.fpo.service.UserService;
 import com.fpo.utils.Identities;
 import com.fpo.utils.VerifyCodeUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -30,7 +31,7 @@ public class UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/register", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+    @RequestMapping(value = "/register", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResultData<Boolean> register(@RequestBody UserParam userParam)
             throws Exception {
         userService.registerUser(userParam);
@@ -45,7 +46,7 @@ public class UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+    @RequestMapping(value = "/login", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResultData<Boolean> login(@RequestBody UserParam userParam, HttpServletResponse response)
             throws Exception {
         String token = Identities.uuid2();
@@ -61,7 +62,7 @@ public class UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/sendVerifyCode", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+    @RequestMapping(value = "/sendVerifyCode", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResultData<Boolean> sendVerifyCode(@RequestBody UserParam userParam)
             throws Exception {
         userService.sendVerifyCode(userParam);
@@ -75,7 +76,7 @@ public class UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/forgetPassword", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+    @RequestMapping(value = "/forgetPassword", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResultData<Boolean> forgetPassword(@RequestBody UserParam userParam)
             throws Exception {
         userService.resetPassword(userParam);
@@ -101,7 +102,7 @@ public class UserController {
      * @return
      * @throws Exception
      */
-    @RequestMapping(value = "/profile/update", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
+    @RequestMapping(value = "/profile/update", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResultData<Boolean> updateProfile(@RequestBody UserParam userParam)
             throws Exception {
         userService.updateProfile(userParam);

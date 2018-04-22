@@ -1,6 +1,6 @@
 package com.fpo.service;
 
-import com.fpo.base.GlobalConstants;
+import com.fpo.constant.GlobalConstants;
 import com.fpo.mapper.QuoteHeaderMapper;
 import com.fpo.model.*;
 import org.apache.commons.collections.CollectionUtils;

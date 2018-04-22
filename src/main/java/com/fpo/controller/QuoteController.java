@@ -6,6 +6,7 @@ import com.fpo.model.QuoteParam;
 import com.fpo.service.QuoteService;
 import com.fpo.utils.LoginUtil;
 import com.github.pagehelper.PageInfo;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -17,10 +18,10 @@ public class QuoteController {
     @Resource
     private QuoteService quoteService;
 
-    @RequestMapping(value = "/addOrUpdate", method = RequestMethod.POST, produces = "application/json; charset=UTF-8")
-    public ResultData<Boolean> addOrUpdate(@RequestBody QuoteParam quoteParam) throws Exception {
+    @RequestMapping(value = "/addOrUpdate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ResultData<Void> addOrUpdate(@RequestBody QuoteParam quoteParam) throws Exception {
         this.quoteService.addOrUpdate(quoteParam);
-        return new ResultData<>(true);
+        return new ResultData<>();
     }
 
     @RequestMapping(value = "/page", method = RequestMethod.GET)

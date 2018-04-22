@@ -2,12 +2,11 @@ package com.fpo.controller;
 
 
 import com.fpo.base.BaseException;
-import com.fpo.base.GlobalConstants;
 import com.fpo.base.ResultData;
+import com.fpo.constant.GlobalConstants;
 import com.fpo.model.OrderDetailsParam;
 import com.fpo.model.OrderParam;
 import com.fpo.service.OrderService;
-import com.fpo.service.ReportService;
 import com.fpo.service.TemplateService;
 import freemarker.template.Template;
 import org.slf4j.Logger;
@@ -31,7 +30,7 @@ import java.util.Map;
  * Created by Siuvan Xia on 2018/2/25 0025.
  */
 @Controller("/")
-public class TemplateController{
+public class TemplateController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TemplateService.class);
 
@@ -40,9 +39,6 @@ public class TemplateController{
 
     @Resource
     private OrderService orderService;
-
-    @Resource
-    private ReportService reportService;
 
     @Resource
     private FreeMarkerConfigurer freeMarkerConfigurer;
@@ -67,12 +63,6 @@ public class TemplateController{
             final OrderParam orderInfo = orderService.getOrderInfo(orderId);
             data.put("title", orderInfo.getTitle());
             data.put("orderDetails", orderInfo.getDetails());
-        }
-        //报价汇总
-        else if (GlobalConstants.TemplateTypeEnum.QUOTE_SUMMARY.getType().equals(type)
-                || GlobalConstants.TemplateTypeEnum.SINGLE_ANALYSIS.getType().equals(type)
-                || GlobalConstants.TemplateTypeEnum.QUOTE_STATISTIC.getType().equals(type)) {
-            data.put("reportInfo", reportService.getReportInfo(orderId, type));
         }
 
         Template template = freeMarkerConfigurer.getConfiguration().getTemplate(e.getTemplateName());

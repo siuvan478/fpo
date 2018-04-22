@@ -1,18 +1,26 @@
-package com.fpo.base;
+package com.fpo.constant;
 
 
+import com.fpo.annotation.Constant;
+import com.fpo.annotation.DictGroup;
 import org.apache.commons.lang3.EnumUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
+/**
+ * 全局常量类
+ */
 public class GlobalConstants {
 
     /**
      * 是/否
      */
+    @Constant
     public static class YesOrNo {
+        public static final String YES_OR_NO_DICT_KEY = "yesOrNo";
+        @DictGroup(groupName = YES_OR_NO_DICT_KEY, key = "0", value = "否")
         public static final Integer NO = 0;
+        @DictGroup(groupName = YES_OR_NO_DICT_KEY, key = "1", value = "是")
         public static final Integer YES = 1;
     }
 
@@ -77,44 +85,6 @@ public class GlobalConstants {
             return templateCode;
         }
 
-    }
-
-    /**
-     * 发票方式 0=不用发票 1=增值税普票 2=增值税专票
-     */
-    public static class InvoiceMode {
-        public static final Integer DO_NOT = 0;
-        public static final Integer GENERAL = 1;
-        public static final Integer SPECIAL = 2;
-
-        public static boolean validate(Integer invoiceMode) {
-            return invoiceMode != null && (invoiceMode.equals(DO_NOT) || invoiceMode.equals(GENERAL) || invoiceMode.equals(SPECIAL));
-        }
-    }
-
-    /**
-     * 报价要求 1=报价含税 2=报价含运费
-     */
-    public static class QuoteMode {
-        public static final String CONTAIN_TAX = "1";
-        public static final String CONTAIN_FREIGHT = "2";
-
-        public static boolean validate(String quoteMode) {
-            return StringUtils.isNotBlank(quoteMode);
-        }
-    }
-
-    /**
-     * 付款方式 0=其他 1=收货后付款 2=预付款
-     */
-    public static class PaymentMode {
-        public static final Integer OTHER = 0;
-        public static final Integer PAY_AFTER_RECEIVING = 1;
-        public static final Integer ADVANCE_PAY = 2;
-
-        public static boolean validate(Integer paymentMode) {
-            return paymentMode != null && (paymentMode.equals(OTHER) || paymentMode.equals(PAY_AFTER_RECEIVING) || paymentMode.equals(ADVANCE_PAY));
-        }
     }
 
     /**

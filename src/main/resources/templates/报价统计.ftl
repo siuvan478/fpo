@@ -373,22 +373,24 @@
                     <Data ss:Type="Number">${obj_index+1}</Data>
                 </Cell>
                 <Cell ss:StyleID="s55">
-                    <Data ss:Type="String">${obj.companyName}</Data>
+                    <Data ss:Type="String">${obj.companyName!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s55">
-                    <Data ss:Type="Number">${obj.totalPrice}</Data>
+                    <Data ss:Type="Number">${obj.totalPrice!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s56">
-                    <Data ss:Type="Number">${obj.percent}</Data>
+                    <Data ss:Type="Number">${obj.percent!}</Data>
                 </Cell>
                 <Cell ss:StyleID="s55">
-                    <Data ss:Type="Number">${obj.quoteCount}</Data>
+                    <Data ss:Type="Number">${obj.quoteCount!}</Data>
                 </Cell>
+                <#if obj.allQuotePriceStr??>
                 <#list obj.allQuotePriceStr?split(",") as price>
                     <Cell ss:StyleID="s55">
                         <Data ss:Type="Number">${price}</Data>
                     </Cell>
                 </#list>
+                </#if>
             </Row>
 </#list>
         </Table>

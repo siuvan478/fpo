@@ -1,16 +1,14 @@
 package com.fpo.controller;
 
 import com.fpo.base.BaseException;
-import com.fpo.base.GlobalConstants;
+import com.fpo.constant.GlobalConstants;
 import com.fpo.base.ResultData;
 import com.fpo.model.Report;
 import com.fpo.service.ReportService;
 import com.google.common.collect.Maps;
 import freemarker.template.Template;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer;
 
 import javax.annotation.Resource;
@@ -20,8 +18,8 @@ import java.util.Map;
 /**
  * Created by Administrator on 2018/4/6 0006.
  */
-@RestController
-@RequestMapping("/report")
+@Controller
+@RequestMapping("/front/report")
 public class ReportController {
 
     @Resource
@@ -48,13 +46,16 @@ public class ReportController {
         }
 
         Template template = freeMarkerConfigurer.getConfiguration().getTemplate(e.getTemplateName());
+        response.reset();
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/octet-stream");
         response.setHeader("Content-disposition", "attachment;filename=" +
                 new String(e.getExportFileName().getBytes(), "iso-8859-1"));
         template.process(data, response.getWriter());
+        response.flushBuffer();
     }
 
+    @ResponseBody
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public ResultData<Report> quoteSummary(@RequestParam Long orderId, @RequestParam Integer reportType)
             throws Exception {

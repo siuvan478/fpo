@@ -1,11 +1,15 @@
 package com.fpo.service;
 
 import com.fpo.base.BaseException;
-import com.fpo.base.GlobalConstants;
-import com.fpo.core.DictConfig;
+import com.fpo.constant.DictConstants;
+import com.fpo.constant.GlobalConstants;
+import com.fpo.utils.DicUtil;
 import com.fpo.mapper.OrderDetailsMapper;
 import com.fpo.mapper.OrderHeaderMapper;
-import com.fpo.model.*;
+import com.fpo.model.OrderDetails;
+import com.fpo.model.OrderDetailsParam;
+import com.fpo.model.OrderHeader;
+import com.fpo.model.OrderParam;
 import com.fpo.utils.BeanMapper;
 import com.fpo.utils.LoginUtil;
 import com.fpo.vo.OrderMgtVO;
@@ -28,9 +32,6 @@ public class OrderService {
 
     @Resource
     private OrderDetailsMapper orderDetailsMapper;
-
-    @Resource
-    private DictConfig dictConfig;
 
     /**
      * 新增或修改报价单
@@ -133,9 +134,9 @@ public class OrderService {
         }
         OrderParam result = BeanMapper.map(orderHeader, OrderParam.class);
         //数据词典
-        result.setInvoiceModeName(dictConfig.getInvoiceModeMap().get(result.getInvoiceMode()));
-        result.setQuoteModeName(dictConfig.getQuoteModeMap().get(result.getQuoteMode()));
-        result.setInvoiceModeName(dictConfig.getInvoiceModeMap().get(result.getInvoiceMode()));
+        result.setInvoiceModeName(DicUtil.getDictValue(DictConstants.INVOICE_MODE_DICT_KEY, result.getInvoiceMode()));
+        result.setQuoteModeName(DicUtil.getDictValue(DictConstants.QUOTE_MODE_DICT_KEY, result.getQuoteMode()));
+        result.setPaymentModeName(DicUtil.getDictValue(DictConstants.QUOTE_MODE_DICT_KEY, result.getPaymentMode()));
         final List<OrderDetails> orderDetails = orderDetailsMapper.selectByHeaderId(headerId);
         if (CollectionUtils.isNotEmpty(orderDetails)) {
             for (OrderDetails d : orderDetails) {
@@ -189,10 +190,16 @@ public class OrderService {
 
     private void validateOrderInfo(OrderParam orderParam) throws Exception {
         if (StringUtils.isBlank(orderParam.getTitle())) throw new BaseException("采购单名称不能为空");
-        if (!GlobalConstants.InvoiceMode.validate(orderParam.getInvoiceMode())) throw new BaseException("发票方式有误");
-        if (!GlobalConstants.QuoteMode.validate(orderParam.getQuoteMode())) throw new BaseException("报价要求有误");
-        if (!GlobalConstants.PaymentMode.validate(orderParam.getPaymentMode())) throw new BaseException("付款方式有误");
-        if (GlobalConstants.PaymentMode.OTHER.equals(orderParam.getPaymentMode())) {
+        if (!DicUtil.validate(DictConstants.INVOICE_MODE_DICT_KEY, orderParam.getInvoiceMode())) {
+            throw new BaseException("发票方式有误");
+        }
+        if (!DicUtil.validate(DictConstants.QUOTE_MODE_DICT_KEY, orderParam.getQuoteMode())) {
+            throw new BaseException("报价要求有误");
+        }
+        if (!DicUtil.validate(DictConstants.PAYMENT_MODE_DICT_KEY, orderParam.getPaymentMode())) {
+            throw new BaseException("报价要求有误");
+        }
+        if (DictConstants.OTHER_PAY.equals(orderParam.getPaymentMode())) {
             if (StringUtils.isBlank(orderParam.getPaymentRemark())) {
                 throw new BaseException("具体付款方式不能为空");
             } else {

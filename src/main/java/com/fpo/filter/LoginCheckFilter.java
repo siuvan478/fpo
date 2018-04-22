@@ -4,7 +4,7 @@ package com.fpo.filter;
 import com.alibaba.druid.util.PatternMatcher;
 import com.alibaba.druid.util.ServletPathMatcher;
 import com.alibaba.fastjson.JSON;
-import com.fpo.base.GlobalConstants;
+import com.fpo.constant.GlobalConstants;
 import com.fpo.base.HttpStateEnum;
 import com.fpo.base.ResultData;
 import com.fpo.model.UserEntity;

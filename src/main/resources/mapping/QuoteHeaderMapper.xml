@@ -62,7 +62,7 @@
     c.title AS orderTitle, c.company_name AS orderCompanyName,
     c.contact AS orderContact, c.contact_info AS orderContactInfo,
     (e.firstQuoteTotalPrice-SUM(b.unit_price * b.supply_quantity))/e.firstQuoteTotalPrice AS `percent`,
-    e.quoteCount, e.allQuotePriceStr
+    IF(e.quoteCount IS NULL, 0, e.quoteCount) AS quoteCount, e.allQuotePriceStr
     FROM fpo_quote_header AS a
     LEFT JOIN fpo_quote_details AS b ON a.id = b.header_id AND b.status = 1
     LEFT JOIN fpo_order_header AS c ON a.order_header_id = c.id
