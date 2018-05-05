@@ -18,6 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,6 +38,9 @@ public class FpoApplicationTests {
 
     @Resource
     private QuoteService quoteService;
+
+    @Resource
+    private AttachmentService attachmentService;
 
     @Test
     public void contextLoads() {
@@ -65,7 +69,7 @@ public class FpoApplicationTests {
     @Test
     public void testOrderAddOrUpdate() throws Exception {
         OrderParam p = new OrderParam();
-        p.setTitle("siuvan的采购单222");
+        p.setTitle("siuvan的采购单333");
         p.setInvoiceMode(1);
         p.setQuoteMode("1");
         p.setPaymentMode(2);
@@ -74,14 +78,19 @@ public class FpoApplicationTests {
         p.setContact("Siuvan");
         p.setContactInfo("17620021827");
         p.setUserId(6L);
-        p.setId(4L);
+       // p.setId(4L);
 
         OrderDetailsParam d = new OrderDetailsParam();
-        d.setName("钢化膜1");
+        d.setName("钢化膜1222");
         d.setQuantity(9999);
         d.setUnit("张");
 
         p.getDetails().add(d);
+
+        ArrayList<Long> attIdLIST = new ArrayList<>();
+        attIdLIST.add(1L);
+        attIdLIST.add(2L);
+        p.setAttIdList(attIdLIST);
         orderService.addOrUpdate(p);
     }
 
@@ -149,7 +158,7 @@ public class FpoApplicationTests {
 
     @Test
     public void getOrderInfo() throws Exception {
-        OrderParam orderInfo = orderService.getOrderInfo(4L);
+        OrderParam orderInfo = orderService.getOrderInfo(5L);
         System.out.println(JSONObject.toJSONString(orderInfo, true));
     }
 
@@ -165,6 +174,18 @@ public class FpoApplicationTests {
     @Test
     public void testPageQueryOrderInfo() {
         System.out.println(JSONObject.toJSONString(orderService.pageQueryOrderInfo(1, 10, null), true));
+    }
+
+    @Test
+    public void testAddAttachment() {
+        AttachmentParam attachmentParam = new AttachmentParam();
+        attachmentParam.setBizId(-1L);
+        attachmentParam.setName("test附件1");
+        attachmentParam.setSuffix(".txt");
+        attachmentParam.setPath("akfhasdjfhlasjkdfhaklsdjf");
+        attachmentParam.setBizType(1);
+        Long attId = attachmentService.save(attachmentParam);
+        System.out.println("保存附件成功：" + attId);
     }
 
 }

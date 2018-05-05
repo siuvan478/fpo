@@ -44,7 +44,6 @@ public class QuoteService {
             header.setCreateDate(operateTime);
             header.setUpdateDate(operateTime);
             header.setUserId(LoginUtil.getUserId());
-            header.setUserId(6L);
             this.quoteHeaderMapper.insert(header);
             result = header.getId();
         }

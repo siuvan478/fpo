@@ -1,8 +1,11 @@
 package com.fpo.model;
 
-import java.util.Date;
+import java.io.Serializable;
 
-public class Attachment {
+public class AttachmentParam implements Serializable {
+
+    private static final long serialVersionUID = -8812657857865624958L;
+
     private Long id;
 
     private Long bizId;
@@ -16,10 +19,6 @@ public class Attachment {
     private String path;
 
     private Long userId;
-
-    private Integer status;
-
-    private Date createDate;
 
     public Long getId() {
         return id;
@@ -75,21 +74,5 @@ public class Attachment {
 
     public void setUserId(Long userId) {
         this.userId = userId;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
     }
 }

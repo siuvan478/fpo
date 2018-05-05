@@ -16,15 +16,11 @@
     delete from fpo_attachment
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.fpo.model.Attachment" >
-    insert into fpo_attachment (id, biz_id, biz_type, 
-      name, suffix, path, 
-      user_id, status, create_date
-      )
+  <insert id="insert" parameterType="com.fpo.model.Attachment" keyProperty="id" useGeneratedKeys="true">
+    insert into fpo_attachment (id, biz_id, biz_type, name, suffix, path, user_id, create_date)
     values (#{id,jdbcType=BIGINT}, #{bizId,jdbcType=BIGINT}, #{bizType,jdbcType=TINYINT}, 
       #{name,jdbcType=VARCHAR}, #{suffix,jdbcType=VARCHAR}, #{path,jdbcType=VARCHAR}, 
-      #{userId,jdbcType=BIGINT}, #{status,jdbcType=TINYINT}, #{createDate,jdbcType=TIMESTAMP}
-      )
+      #{userId,jdbcType=BIGINT}, now())
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.fpo.model.Attachment" >
     update fpo_attachment
@@ -47,4 +43,19 @@
     select id, biz_id, biz_type, name, suffix, path, user_id, status, create_date
     from fpo_attachment
   </select>
+
+  <!--更新附件bizId-->
+  <update id="updateBizIdByCondition">
+    update fpo_attachment set biz_id = #{bizId}
+    where id IN
+    <foreach collection="attIdList" item="attId" open="(" close=")" separator=",">
+      #{attId}
+    </foreach>
+  </update>
+
+  <select id="selectListByBizIdAndType" resultMap="BaseResultMap">
+    select id, biz_id, biz_type, name, suffix, path, user_id, status, create_date
+    from fpo_attachment where status = 1 and biz_id = #{bizId} and biz_type = #{bizType}
+  </select>
+
 </mapper>

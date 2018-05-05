@@ -3,7 +3,7 @@ package com.fpo.service;
 import com.fpo.base.BaseException;
 import com.fpo.constant.DictConstants;
 import com.fpo.constant.GlobalConstants;
-import com.fpo.utils.DicUtil;
+import com.fpo.mapper.AttachmentMapper;
 import com.fpo.mapper.OrderDetailsMapper;
 import com.fpo.mapper.OrderHeaderMapper;
 import com.fpo.model.OrderDetails;
@@ -11,10 +11,12 @@ import com.fpo.model.OrderDetailsParam;
 import com.fpo.model.OrderHeader;
 import com.fpo.model.OrderParam;
 import com.fpo.utils.BeanMapper;
+import com.fpo.utils.DicUtil;
 import com.fpo.utils.LoginUtil;
 import com.fpo.vo.OrderMgtVO;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Maps;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class OrderService {
@@ -33,6 +36,9 @@ public class OrderService {
     @Resource
     private OrderDetailsMapper orderDetailsMapper;
 
+    @Resource
+    private AttachmentMapper attachmentMapper;
+
     /**
      * 新增或修改报价单
      *
@@ -42,6 +48,8 @@ public class OrderService {
      */
     @Transactional
     public Long addOrUpdate(OrderParam orderParam) throws Exception {
+        Long orderId = null;
+        //校验参数
         this.validateOrderInfo(orderParam);
         //新增
         if (orderParam.getId() == null) {
@@ -55,7 +63,7 @@ public class OrderService {
                 }
             }
 
-            return header.getId();
+            orderId = header.getId();
         }
         //修改
         else {
@@ -75,8 +83,18 @@ public class OrderService {
                 }
             }
 
-            return header.getId();
+            orderId = header.getId();
         }
+
+        //附件处理
+        if (CollectionUtils.isNotEmpty(orderParam.getAttIdList())) {
+            Map<String, Object> map = Maps.newHashMap();
+            map.put("bizId", orderId);
+            map.put("attIdList", orderParam.getAttIdList());
+            attachmentMapper.updateBizIdByCondition(map);
+        }
+
+        return orderId;
     }
 
     /**
@@ -145,6 +163,12 @@ public class OrderService {
                 result.getDetails().add(odp);
             }
         }
+
+        // 附件
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("bizId", headerId);
+        map.put("bizType", DictConstants.PURCHASE);
+        result.setAttachmentList(this.attachmentMapper.selectListByBizIdAndType(map));
         return result;
     }
 

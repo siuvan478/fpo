@@ -41,4 +41,13 @@ public class DictConstants {
     @DictGroup(groupName = PAYMENT_MODE_DICT_KEY, key = "2", value = "预付款")
     public static final Integer ADVANCE = 2;
 
+    /**
+     * 附件类型
+     */
+    public static final String BIZ_TYPE_DICT_KEY = "bizType";
+    @DictGroup(groupName = BIZ_TYPE_DICT_KEY, key = "1", value = "采购附件")
+    public static final Integer PURCHASE = 1;
+    @DictGroup(groupName = BIZ_TYPE_DICT_KEY, key = "2", value = "报价附件")
+    public static final Integer QUOTE = 2;
+
 }

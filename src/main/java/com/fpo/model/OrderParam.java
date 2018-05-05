@@ -41,6 +41,10 @@ public class OrderParam implements Serializable {
     private String invoiceModeName;
     private String quoteModeName;
     private String paymentModeName;
+    // 附件ID
+    private List<Long> attIdList;
+    // 附件列表
+    private List<Attachment> attachmentList;
 
     public OrderParam() {
     }
@@ -179,5 +183,21 @@ public class OrderParam implements Serializable {
 
     public void setPaymentModeName(String paymentModeName) {
         this.paymentModeName = paymentModeName;
+    }
+
+    public List<Long> getAttIdList() {
+        return attIdList;
+    }
+
+    public void setAttIdList(List<Long> attIdList) {
+        this.attIdList = attIdList;
+    }
+
+    public List<Attachment> getAttachmentList() {
+        return attachmentList;
+    }
+
+    public void setAttachmentList(List<Attachment> attachmentList) {
+        this.attachmentList = attachmentList;
     }
 }

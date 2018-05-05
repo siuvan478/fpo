@@ -21,6 +21,7 @@ public class OrderController {
     @RequestMapping(value = "/addOrUpdate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public ResultData<Long> addOrUpdate(@RequestBody OrderParam orderParam)
             throws Exception {
+        orderParam.setUserId(LoginUtil.getUserId());
         return new ResultData<>(orderService.addOrUpdate(orderParam));
     }
 

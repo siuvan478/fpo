@@ -46,12 +46,22 @@ public class DicUtil {
         if (StringUtils.isBlank(key) || StringUtils.isBlank(dictKey)) return StringUtils.EMPTY;
         List<DictVO> dictVOs = getDictVOs(dictKey);
         if (CollectionUtils.isEmpty(dictVOs)) return StringUtils.EMPTY;
-        for (DictVO dictVO : dictVOs) {
-            if (key.equals(dictVO.getKey())) {
-                return dictVO.getValue();
+        StringBuilder sb = new StringBuilder();
+        String[] keyArray = key.split(",");
+        for (String k : keyArray) {
+            for (DictVO dictVO : dictVOs) {
+                if (dictVO.getKey().equals(k)) {
+                    if (StringUtils.isBlank(sb.toString())) {
+                        sb.append(dictVO.getValue());
+                    } else {
+                        sb.append(",").append(dictVO.getValue());
+                    }
+                    break;
+                }
             }
         }
-        return StringUtils.EMPTY;
+
+        return sb.toString();
     }
 
     public static boolean validate(String dictKey, Integer key) {
@@ -63,12 +73,19 @@ public class DicUtil {
         if (StringUtils.isBlank(key) || StringUtils.isBlank(dictKey)) return false;
         List<DictVO> dictVOs = getDictVOs(dictKey);
         if (CollectionUtils.isEmpty(dictVOs)) return false;
-        for (DictVO dictVO : dictVOs) {
-            if (dictVO.getKey().equals(key)) {
-                return true;
+
+        int equalsSize = 0;
+        String[] keyArray = key.split(",");
+        for (String k : keyArray) {
+            for (DictVO dictVO : dictVOs) {
+                if (dictVO.getKey().equals(k)) {
+                    equalsSize++;
+                    break;
+                }
             }
         }
-        return false;
+
+        return equalsSize == keyArray.length;
     }
 
     public DicUtil() {
