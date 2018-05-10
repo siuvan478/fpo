@@ -19,4 +19,6 @@ public interface AttachmentMapper {
     int updateBizIdByCondition(Map<String, Object> map);
 
     List<Attachment> selectListByBizIdAndType(Map<String, Object> map);
+
+    int deleteByBizIdAndType(Map<String, Object> map);
 }

@@ -39,6 +39,12 @@ public class OrderDetailsParam implements Serializable {
     //小计
     private BigDecimal subtotal;
 
+    //附件ID
+    private Long attId;
+
+    //附件信息
+    private AttachmentParam attachmentInfo;
+
     public OrderDetailsParam() {
     }
 
@@ -138,6 +144,14 @@ public class OrderDetailsParam implements Serializable {
         this.picture = picture;
     }
 
+    public Long getAttId() {
+        return attId;
+    }
+
+    public void setAttId(Long attId) {
+        this.attId = attId;
+    }
+
     public BigDecimal getUnitPrice() {
         return unitPrice;
     }
@@ -172,5 +186,13 @@ public class OrderDetailsParam implements Serializable {
 
     public void setSubtotal(String subtotal) {
         this.subtotal = new BigDecimal(subtotal);
+    }
+
+    public AttachmentParam getAttachmentInfo() {
+        return attachmentInfo;
+    }
+
+    public void setAttachmentInfo(AttachmentParam attachmentInfo) {
+        this.attachmentInfo = attachmentInfo;
     }
 }

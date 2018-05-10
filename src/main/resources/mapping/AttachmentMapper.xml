@@ -47,10 +47,16 @@
   <!--更新附件bizId-->
   <update id="updateBizIdByCondition">
     update fpo_attachment set biz_id = #{bizId}
-    where id IN
+    where status = 1 and bizType = #{bizType} and id IN
     <foreach collection="attIdList" item="attId" open="(" close=")" separator=",">
       #{attId}
     </foreach>
+  </update>
+
+  <!--删除附件-->
+  <update id="deleteByBizIdAndType">
+    update fpo_attachment set status = 0
+    where status = 1 and biz_id = #{bizId} and biz_type = #{bizType}
   </update>
 
   <select id="selectListByBizIdAndType" resultMap="BaseResultMap">

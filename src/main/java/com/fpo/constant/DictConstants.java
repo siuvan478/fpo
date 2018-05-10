@@ -45,9 +45,11 @@ public class DictConstants {
      * 附件类型
      */
     public static final String BIZ_TYPE_DICT_KEY = "bizType";
-    @DictGroup(groupName = BIZ_TYPE_DICT_KEY, key = "1", value = "采购附件")
-    public static final Integer PURCHASE = 1;
-    @DictGroup(groupName = BIZ_TYPE_DICT_KEY, key = "2", value = "报价附件")
-    public static final Integer QUOTE = 2;
+    @DictGroup(groupName = BIZ_TYPE_DICT_KEY, key = "1", value = "采购单附件")
+    public static final Integer PURCHASE_HEADER = 1;
+    @DictGroup(groupName = BIZ_TYPE_DICT_KEY, key = "2", value = "采购单明细附件")
+    public static final Integer PURCHASE_DETAIL = 2;
+    @DictGroup(groupName = BIZ_TYPE_DICT_KEY, key = "3", value = "报价附件")
+    public static final Integer QUOTE_HEADER = 3;
 
 }

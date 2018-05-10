@@ -78,7 +78,7 @@ public class FpoApplicationTests {
         p.setContact("Siuvan");
         p.setContactInfo("17620021827");
         p.setUserId(6L);
-       // p.setId(4L);
+        // p.setId(4L);
 
         OrderDetailsParam d = new OrderDetailsParam();
         d.setName("钢化膜1222");
@@ -105,9 +105,9 @@ public class FpoApplicationTests {
         p.setContactInfo("17620021827");
         // p.setId(19L);
 
-        List<OrderDetails> orderDetails = orderService.getOrderDetails(orderId);
+        List<OrderDetailsParam> orderDetails = orderService.getOrderDetails(orderId);
 
-        for (OrderDetails o : orderDetails) {
+        for (OrderDetailsParam o : orderDetails) {
             QuoteDetailsParam d1 = new QuoteDetailsParam();
             d1.setOrderDetailId(o.getId());
             d1.setSupplyQuantity(RandomUtils.nextInt(1, 99));
@@ -177,7 +177,7 @@ public class FpoApplicationTests {
     }
 
     @Test
-    public void testAddAttachment() {
+    public void testAddAttachment() throws Exception {
         AttachmentParam attachmentParam = new AttachmentParam();
         attachmentParam.setBizId(-1L);
         attachmentParam.setName("test附件1");

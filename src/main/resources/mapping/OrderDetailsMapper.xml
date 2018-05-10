@@ -24,7 +24,7 @@
     delete from fpo_order_details
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.fpo.model.OrderDetails" >
+  <insert id="insert" parameterType="com.fpo.model.OrderDetails" keyProperty="id" useGeneratedKeys="true">
     insert into fpo_order_details (id, header_id, number, 
       name, spec, brands, 
       description, quantity, unit, 
@@ -62,9 +62,35 @@
     status, create_date, update_date
     from fpo_order_details
   </select>
-  <select id="selectByHeaderId" resultMap="BaseResultMap" parameterType="long">
-    select id, header_id, number, name, spec, brands, description, quantity, unit, picture,
-    status, create_date, update_date
-    from fpo_order_details where status = 1 and header_id = #{id}
+
+  <resultMap id="selectByHeaderIdResultMap" type="com.fpo.model.OrderDetailsParam" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="header_id" property="headerId" jdbcType="BIGINT" />
+    <result column="number" property="number" jdbcType="VARCHAR" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="spec" property="spec" jdbcType="VARCHAR" />
+    <result column="brands" property="brands" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="quantity" property="quantity" jdbcType="INTEGER" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="picture" property="picture" jdbcType="BIGINT" />
+    <result column="orderDetailId" property="orderDetailId" jdbcType="TINYINT" />
+    <!--附件信息1对1-->
+    <association property="attachmentInfo" javaType="com.fpo.model.AttachmentParam">
+      <id column="id" property="id" jdbcType="BIGINT" />
+      <result column="biz_id" property="bizId" jdbcType="BIGINT" />
+      <result column="biz_type" property="bizType" jdbcType="TINYINT" />
+      <result column="name" property="name" jdbcType="VARCHAR" />
+      <result column="suffix" property="suffix" jdbcType="VARCHAR" />
+      <result column="path" property="path" jdbcType="VARCHAR" />
+    </association>
+  </resultMap>
+  <!--根据headerId查询采购单明细以及附件-->
+  <select id="selectByHeaderId" resultMap="selectByHeaderIdResultMap" parameterType="long">
+    select
+          fod.id, fod.header_id, fod.number, fod.name, fod.spec, fod.brands, fod.description, fod.quantity, fod.unit, fod.picture, fod.id as orderDetailId,
+          fa.id, fa.biz_id, fa.biz_type, fa.name, fa.suffix, fa.path
+    from fpo_order_details as fod left join fpo_attachment as fa on fod.id = fa.biz_id and fa.status = 1 and fa.biz_type = 2
+    where fod.status = 1 and fod.header_id = #{id}
   </select>
 </mapper>

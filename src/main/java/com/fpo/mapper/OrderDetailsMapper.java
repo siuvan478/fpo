@@ -1,6 +1,7 @@
 package com.fpo.mapper;
 
 import com.fpo.model.OrderDetails;
+import com.fpo.model.OrderDetailsParam;
 
 import java.util.List;
 
@@ -17,5 +18,5 @@ public interface OrderDetailsMapper {
 
     void deleteByHeaderId(Long id);
 
-    List<OrderDetails> selectByHeaderId(Long id);
+    List<OrderDetailsParam> selectByHeaderId(Long id);
 }

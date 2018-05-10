@@ -24,6 +24,9 @@ public class QuoteParam implements Serializable {
 
     private String contactInfo;
 
+    // for parameter
+    private List<Long> attIdList;//附件ID列表
+
     // for app
     private BigDecimal totalPrice; //报价总价
     private Date quoteTime; //报价时间
@@ -93,6 +96,14 @@ public class QuoteParam implements Serializable {
 
     public void setContactInfo(String contactInfo) {
         this.contactInfo = contactInfo;
+    }
+
+    public List<Long> getAttIdList() {
+        return attIdList;
+    }
+
+    public void setAttIdList(List<Long> attIdList) {
+        this.attIdList = attIdList;
     }
 
     public BigDecimal getTotalPrice() {

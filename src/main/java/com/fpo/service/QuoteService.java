@@ -1,6 +1,7 @@
 package com.fpo.service;
 
 import com.fpo.base.BaseException;
+import com.fpo.constant.DictConstants;
 import com.fpo.constant.GlobalConstants;
 import com.fpo.mapper.QuoteDetailHistoriesMapper;
 import com.fpo.mapper.QuoteDetailsMapper;
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -32,10 +34,16 @@ public class QuoteService {
     @Resource
     private QuoteDetailHistoriesMapper quoteDetailHistoriesMapper;
 
+    @Resource
+    private AttachmentService attachmentService;
+
     @Transactional
     public Long addOrUpdate(QuoteParam p) throws Exception {
+        //参数校验
         this.validateParam(p);
-        Long result = null;
+        //报价单ID
+        Long quoteId = null;
+
         Date operateTime = new Date();
         //新增
         if (p.getId() == null) {
@@ -43,9 +51,9 @@ public class QuoteService {
             header.setStatus(GlobalConstants.State.NORMAL);
             header.setCreateDate(operateTime);
             header.setUpdateDate(operateTime);
-            header.setUserId(LoginUtil.getUserId());
+            header.setUserId(6L);
             this.quoteHeaderMapper.insert(header);
-            result = header.getId();
+            quoteId = header.getId();
         }
         //修改
         else {
@@ -57,20 +65,26 @@ public class QuoteService {
             header.setUpdateDate(operateTime);
             this.quoteHeaderMapper.updateByPrimaryKey(header);
             this.quoteDetailsMapper.deleteByHeaderId(header.getId());
-            result = header.getId();
+            quoteId = header.getId();
         }
 
         if (CollectionUtils.isNotEmpty(p.getDetails())) {
             List<QuoteDetails> detailsList = new ArrayList<>();
             for (QuoteDetailsParam d : p.getDetails()) {
-                final QuoteDetails details = new QuoteDetails(result, GlobalConstants.State.NORMAL, operateTime, operateTime);
+                final QuoteDetails details = new QuoteDetails(quoteId, GlobalConstants.State.NORMAL, operateTime, operateTime);
                 BeanMapper.copy(d, details);
                 detailsList.add(details);
             }
-            quoteDetailsMapper.batchInsert(detailsList);
-            quoteDetailHistoriesMapper.batchInsert(BeanMapper.mapList(detailsList, QuoteDetailHistories.class));
+            this.quoteDetailsMapper.batchInsert(detailsList);
+            this.quoteDetailHistoriesMapper.batchInsert(BeanMapper.mapList(detailsList, QuoteDetailHistories.class));
         }
-        return result;
+
+        //采购单附件处理
+        if (CollectionUtils.isNotEmpty(p.getAttIdList())) {
+            this.attachmentService.updateBizIdByCondition(quoteId, DictConstants.QUOTE_HEADER, p.getAttIdList());
+        }
+
+        return quoteId;
     }
 
     /**

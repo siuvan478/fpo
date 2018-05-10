@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,9 @@ public class OrderService {
     @Resource
     private AttachmentMapper attachmentMapper;
 
+    @Resource
+    private AttachmentService attachmentService;
+
     /**
      * 新增或修改报价单
      *
@@ -48,18 +52,30 @@ public class OrderService {
      */
     @Transactional
     public Long addOrUpdate(OrderParam orderParam) throws Exception {
+
+        //采购单ID
         Long orderId = null;
+
         //校验参数
         this.validateOrderInfo(orderParam);
+
         //新增
         if (orderParam.getId() == null) {
+            //保存header
             OrderHeader header = BeanMapper.map(orderParam, OrderHeader.class);
-            orderHeaderMapper.insert(header);
+            this.orderHeaderMapper.insert(header);
+            //保存detail
             if (CollectionUtils.isNotEmpty(orderParam.getDetails())) {
+
                 for (OrderDetailsParam d : orderParam.getDetails()) {
                     OrderDetails detail = BeanMapper.map(d, OrderDetails.class);
                     detail.setHeaderId(header.getId());
-                    orderDetailsMapper.insert(detail);
+                    this.orderDetailsMapper.insert(detail);
+
+                    //采购明细附件处理
+                    if (d.getAttId() != null) {
+                        this.attachmentService.updateBizIdByCondition(detail.getId(), DictConstants.PURCHASE_DETAIL, Collections.singletonList(d.getAttId()));
+                    }
                 }
             }
 
@@ -67,31 +83,39 @@ public class OrderService {
         }
         //修改
         else {
+            //更新采购单
             OrderHeader header = orderHeaderMapper.selectByPrimaryKey(orderParam.getId());
             if (header == null) {
                 throw new BaseException("采购单不存在");
             }
             BeanMapper.copy(orderParam, header);
             header.setUpdateDate(new Date());
-            orderHeaderMapper.updateByPrimaryKey(header);
-            orderDetailsMapper.deleteByHeaderId(orderParam.getId());
+            this.orderHeaderMapper.updateByPrimaryKey(header);
+
+            //删除采购明细
+            this.orderDetailsMapper.deleteByHeaderId(orderParam.getId());
+
+            //遍历插入采购明细
             if (!CollectionUtils.isEmpty(orderParam.getDetails())) {
+
                 for (OrderDetailsParam d : orderParam.getDetails()) {
                     OrderDetails detail = BeanMapper.map(d, OrderDetails.class);
                     detail.setHeaderId(header.getId());
                     orderDetailsMapper.insert(detail);
+
+                    //采购明细附件处理
+                    if (d.getAttId() != null) {
+                        this.attachmentService.updateBizIdByCondition(detail.getId(), DictConstants.PURCHASE_DETAIL, Collections.singletonList(d.getAttId()));
+                    }
                 }
             }
 
             orderId = header.getId();
         }
 
-        //附件处理
+        //采购单附件处理
         if (CollectionUtils.isNotEmpty(orderParam.getAttIdList())) {
-            Map<String, Object> map = Maps.newHashMap();
-            map.put("bizId", orderId);
-            map.put("attIdList", orderParam.getAttIdList());
-            attachmentMapper.updateBizIdByCondition(map);
+            this.attachmentService.updateBizIdByCondition(orderId, DictConstants.PURCHASE_HEADER, orderParam.getAttIdList());
         }
 
         return orderId;
@@ -155,19 +179,14 @@ public class OrderService {
         result.setInvoiceModeName(DicUtil.getDictValue(DictConstants.INVOICE_MODE_DICT_KEY, result.getInvoiceMode()));
         result.setQuoteModeName(DicUtil.getDictValue(DictConstants.QUOTE_MODE_DICT_KEY, result.getQuoteMode()));
         result.setPaymentModeName(DicUtil.getDictValue(DictConstants.QUOTE_MODE_DICT_KEY, result.getPaymentMode()));
-        final List<OrderDetails> orderDetails = orderDetailsMapper.selectByHeaderId(headerId);
-        if (CollectionUtils.isNotEmpty(orderDetails)) {
-            for (OrderDetails d : orderDetails) {
-                final OrderDetailsParam odp = BeanMapper.map(d, OrderDetailsParam.class);
-                odp.setOrderDetailId(d.getId());
-                result.getDetails().add(odp);
-            }
-        }
+
+        //采购明细
+        result.setDetails(this.orderDetailsMapper.selectByHeaderId(headerId));
 
         // 附件
         Map<String, Object> map = Maps.newHashMap();
         map.put("bizId", headerId);
-        map.put("bizType", DictConstants.PURCHASE);
+        map.put("bizType", DictConstants.PURCHASE_HEADER);
         result.setAttachmentList(this.attachmentMapper.selectListByBizIdAndType(map));
         return result;
     }
@@ -179,7 +198,7 @@ public class OrderService {
      * @return
      * @throws Exception
      */
-    public List<OrderDetails> getOrderDetails(Long headerId) throws Exception {
+    public List<OrderDetailsParam> getOrderDetails(Long headerId) throws Exception {
         return orderDetailsMapper.selectByHeaderId(headerId);
     }
 
