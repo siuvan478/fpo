@@ -1,5 +1,6 @@
 package com.fpo.controller;
 
+import com.fpo.annotation.SkipLoginCheck;
 import com.fpo.base.ResultData;
 import com.fpo.model.OrderParam;
 import com.fpo.service.OrderService;
@@ -25,6 +26,7 @@ public class OrderController {
         return new ResultData<>(orderService.addOrUpdate(orderParam));
     }
 
+    @SkipLoginCheck(value = "/order/preview")
     @RequestMapping(value = "/preview", method = RequestMethod.GET)
     public ResultData<OrderParam> preview(@RequestParam Long id)
             throws Exception {

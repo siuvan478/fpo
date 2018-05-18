@@ -7,22 +7,34 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 报价单参数
+ */
 public class QuoteParam implements Serializable {
     private static final long serialVersionUID = -5722075908040350419L;
 
     private List<QuoteDetailsParam> details = new ArrayList<>();
 
+    // 报价单ID
     private Long id;
 
+    // 采购单ID
     private Long orderHeaderId;
 
+    // 报价说明
     private String remark;
 
+    // 报价单位
     private String companyName;
 
+    // 联系人
     private String contact;
 
+    // 联系方式
     private String contactInfo;
+
+    // 验证码
+    private String verifyCode;
 
     // for parameter
     private List<Long> attIdList;//附件ID列表
@@ -96,6 +108,14 @@ public class QuoteParam implements Serializable {
 
     public void setContactInfo(String contactInfo) {
         this.contactInfo = contactInfo;
+    }
+
+    public String getVerifyCode() {
+        return verifyCode;
+    }
+
+    public void setVerifyCode(String verifyCode) {
+        this.verifyCode = verifyCode;
     }
 
     public List<Long> getAttIdList() {

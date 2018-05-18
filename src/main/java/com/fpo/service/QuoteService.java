@@ -8,17 +8,18 @@ import com.fpo.mapper.QuoteDetailsMapper;
 import com.fpo.mapper.QuoteHeaderMapper;
 import com.fpo.model.*;
 import com.fpo.utils.BeanMapper;
+import com.fpo.utils.Identities;
 import com.fpo.utils.LoginUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -37,13 +38,24 @@ public class QuoteService {
     @Resource
     private AttachmentService attachmentService;
 
-    @Transactional
-    public Long addOrUpdate(QuoteParam p) throws Exception {
-        //参数校验
-        this.validateParam(p);
-        //报价单ID
-        Long quoteId = null;
+    @Resource
+    private UserService userService;
 
+    @Transactional
+    public String addOrUpdate(QuoteParam p) throws Exception {
+        // 参数校验
+        this.validateParam(p);
+        // token
+        String token = Identities.uuid2();
+        // 登录
+        UserParam userLoginParam = new UserParam();
+        userLoginParam.setUsername(p.getContactInfo());
+        userLoginParam.setLoginMode(GlobalConstants.LoginMode.SMS);
+        userLoginParam.setVerifyCode(p.getVerifyCode());
+        Long userId = userService.login(userLoginParam, token);
+        // 报价单ID
+        Long quoteId = null;
+        // 当前时间
         Date operateTime = new Date();
         //新增
         if (p.getId() == null) {
@@ -51,7 +63,7 @@ public class QuoteService {
             header.setStatus(GlobalConstants.State.NORMAL);
             header.setCreateDate(operateTime);
             header.setUpdateDate(operateTime);
-            header.setUserId(6L);
+            header.setUserId(userId);
             this.quoteHeaderMapper.insert(header);
             quoteId = header.getId();
         }
@@ -68,6 +80,7 @@ public class QuoteService {
             quoteId = header.getId();
         }
 
+        // 采购单明细
         if (CollectionUtils.isNotEmpty(p.getDetails())) {
             List<QuoteDetails> detailsList = new ArrayList<>();
             for (QuoteDetailsParam d : p.getDetails()) {
@@ -84,7 +97,7 @@ public class QuoteService {
             this.attachmentService.updateBizIdByCondition(quoteId, DictConstants.QUOTE_HEADER, p.getAttIdList());
         }
 
-        return quoteId;
+        return token;
     }
 
     /**
@@ -124,7 +137,26 @@ public class QuoteService {
         return quoteHeaderMapper.getQuoteInfoList(orderId);
     }
 
+    /**
+     * 报价单新增修改参数校验
+     *
+     * @param p 参数
+     * @throws Exception
+     */
     private void validateParam(QuoteParam p) throws Exception {
+
+        if (StringUtils.isBlank(p.getCompanyName())) {
+            throw new BaseException("报价单位不能为空");
+        }
+
+        if (StringUtils.isBlank(p.getContact())) {
+            throw new BaseException("联系人不能为空");
+        }
+
+        if (StringUtils.isBlank(p.getVerifyCode())) {
+            throw new BaseException("验证码不能为空");
+        }
+
         if (CollectionUtils.isNotEmpty(p.getDetails())) {
             for (QuoteDetailsParam d : p.getDetails()) {
                 if (d.getOrderDetailId() == null) {

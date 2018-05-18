@@ -1,6 +1,7 @@
 package com.fpo.utils;
 
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,11 +97,11 @@ public class RedisUtils {
         } else if (value.getClass().equals(Boolean.class)) {
             stringRedisTemplate.opsForValue().set(key, value.toString());
         } else {
-            redisTemplate.opsForValue().set(key, value);
+            stringRedisTemplate.opsForValue().set(key, JSON.toJSONString(value));
         }
 
         if (time != null && time > 0) {
-            redisTemplate.expire(key, time, TimeUnit.SECONDS);
+            stringRedisTemplate.expire(key, time, TimeUnit.SECONDS);
         }
     }
 
@@ -114,7 +115,7 @@ public class RedisUtils {
      */
     @SuppressWarnings("unchecked")
     public <T> T get(String key, Class<T> clazz) {
-        return (T) redisTemplate.boundValueOps(key).get();
+        return JsonMapper.nonDefaultMapper().fromJson(stringRedisTemplate.boundValueOps(key).get(), clazz);
     }
 
     /**

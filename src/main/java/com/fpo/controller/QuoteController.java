@@ -1,5 +1,6 @@
 package com.fpo.controller;
 
+import com.fpo.annotation.SkipLoginCheck;
 import com.fpo.base.ResultData;
 import com.fpo.model.QuoteHeader;
 import com.fpo.model.QuoteParam;
@@ -18,10 +19,10 @@ public class QuoteController {
     @Resource
     private QuoteService quoteService;
 
+    @SkipLoginCheck(value = "/quote/addOrUpdate")
     @RequestMapping(value = "/addOrUpdate", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-    public ResultData<Void> addOrUpdate(@RequestBody QuoteParam quoteParam) throws Exception {
-        this.quoteService.addOrUpdate(quoteParam);
-        return new ResultData<>();
+    public ResultData<String> addOrUpdate(@RequestBody QuoteParam quoteParam) throws Exception {
+        return new ResultData<>(this.quoteService.addOrUpdate(quoteParam));
     }
 
     @RequestMapping(value = "/page", method = RequestMethod.GET)

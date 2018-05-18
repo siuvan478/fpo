@@ -2,8 +2,8 @@ package com.fpo.service;
 
 import com.alibaba.fastjson.JSONObject;
 import com.fpo.base.BaseException;
-import com.fpo.constant.GlobalConstants;
 import com.fpo.base.HttpStateEnum;
+import com.fpo.constant.GlobalConstants;
 import com.fpo.mapper.UserMapper;
 import com.fpo.model.*;
 import com.fpo.utils.*;
@@ -26,7 +26,7 @@ public class UserService {
     /**
      * 密码最大错误次数
      */
-    private static final int MAX_PWD_ERROR_COUNT = 5;
+    private static final int MAX_PWD_ERROR_COUNT = 100;
     /**
      * token缓存时间 15天
      */
@@ -64,6 +64,10 @@ public class UserService {
         if (StringUtils.isBlank(smsRegVerifyCode) || !smsRegVerifyCode.equals(userParam.getVerifyCode())) {
             throw new BaseException("验证码错误");
         }
+        //清空验证码
+        else {
+            redisUtils.delete(GlobalConstants.CacheKey.SMS_REG_VERIFY_CODE_KEY + userParam.getUsername());
+        }
         User user = BeanMapper.map(userParam, User.class);
         byte[] salt = Digests.generateSalt(SALT_SIZE);
         user.setSalt(Encodes.encodeHex(salt));
@@ -81,17 +85,20 @@ public class UserService {
      * @param token     token
      * @throws Exception
      */
-    public void login(UserParam userParam, String token) throws Exception {
+    public Long login(UserParam userParam, String token) throws Exception {
         //参数校验
         if (StringUtils.isBlank(userParam.getUsername())) throw new BaseException("用户名不能为空");
-        if (StringUtils.isBlank(userParam.getPassword())) throw new BaseException("密码不能为空");
         if (!GlobalConstants.LoginMode.validate(userParam.getLoginMode())) throw new BaseException("登录方式参数异常");
+        if (GlobalConstants.LoginMode.PWD.equals(userParam.getLoginMode()) && StringUtils.isBlank(userParam.getPassword())) {
+            throw new BaseException("密码不能为空");
+        }
         //判断用户是否存在
         User userInfo = userMapper.findByUsername(userParam.getUsername());
         //短信登录
         if (GlobalConstants.LoginMode.SMS.equals(userParam.getLoginMode())) {
             String smsLoginVerifyCode = redisUtils.getStr(GlobalConstants.CacheKey.SMS_LOGIN_VERIFY_CODE_KEY + userParam.getUsername());
-            if (StringUtils.isBlank(smsLoginVerifyCode) || !smsLoginVerifyCode.equals(userParam.getVerifyCode())) {
+            if(false){
+            //if (StringUtils.isBlank(smsLoginVerifyCode) || !smsLoginVerifyCode.equals(userParam.getVerifyCode())) {
                 throw new BaseException("验证码错误");
             } else {
                 //第一次登录，注册为用户
@@ -104,6 +111,8 @@ public class UserService {
                     userInfo.setRegTime(new Date());
                     userMapper.insert(userInfo);
                 }
+                //清空验证码
+                redisUtils.delete(GlobalConstants.CacheKey.SMS_LOGIN_VERIFY_CODE_KEY + userParam.getUsername());
             }
         }
         //密码登录
@@ -115,7 +124,7 @@ public class UserService {
                 redisUtils.incr(GlobalConstants.CacheKey.PWD_ERROR_COUNT_KEY + userParam.getUsername(), 1L);
                 final Integer errCount = redisUtils.getInt(GlobalConstants.CacheKey.PWD_ERROR_COUNT_KEY + userParam.getUsername());
                 if (errCount >= MAX_PWD_ERROR_COUNT) {
-                    throw new BaseException("密码连续错误超过3次", HttpStateEnum.NEED_CODE.getCode());
+                    throw new BaseException("密码连续错误过多", HttpStateEnum.NEED_CODE.getCode());
                 }
                 throw new BaseException("用户名或密码错误");
             } else {
@@ -134,6 +143,8 @@ public class UserService {
         newUserInfo.setToken(token);
         redisUtils.setex(GlobalConstants.CacheKey.USER_ID_KEY + newUserInfo.getId().toString(), newUserInfo, CONVERSATION_KEEP_TIMEOUT);
         redisUtils.setex(GlobalConstants.CacheKey.TOKEN_KEY + token, newUserInfo, CONVERSATION_KEEP_TIMEOUT);
+
+        return userInfo.getId();
     }
 
     /**
@@ -216,9 +227,11 @@ public class UserService {
         if (userInfo == null) throw new BaseException("请先注册");
         byte[] salt = Digests.generateSalt(SALT_SIZE);
         userInfo.setSalt(Encodes.encodeHex(salt));
-        byte[] hashPassword = Digests.sha1(userInfo.getPassword().getBytes(), salt, HASH_INTERATIONS);
+        byte[] hashPassword = Digests.sha1(userParam.getNewPassword().getBytes(), salt, HASH_INTERATIONS);
         userInfo.setPassword(Encodes.encodeHex(hashPassword));
         userMapper.updateByPrimaryKey(userInfo);
+        //清空验证码
+        redisUtils.delete(GlobalConstants.CacheKey.RESET_PWD_VERIFY_CODE_KEY + userParam.getUsername());
     }
 
     /**
